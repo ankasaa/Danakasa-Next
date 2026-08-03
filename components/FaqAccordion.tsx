@@ -13,7 +13,7 @@ export default function FaqAccordion() {
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-16 md:py-24">
-      <h2 className="text-center text-3xl font-bold text-ink md:text-4xl">
+      <h2 className="text-center text-3xl font-bold text-ink dark:text-neutral-50 md:text-4xl">
         Jawaban atas <br className="sm:hidden" /> Pertanyaan Anda
       </h2>
 
@@ -23,17 +23,17 @@ export default function FaqAccordion() {
           return (
             <div
               key={faq.question}
-              className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-neutral-100"
+              className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-neutral-100 dark:bg-neutral-900 dark:ring-neutral-800"
             >
               <button
                 type="button"
                 onClick={() => toggle(index)}
                 aria-expanded={isOpen}
                 aria-controls={`faq-panel-${index}`}
-                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-semibold text-ink transition-colors hover:text-brand-600"
+                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-semibold text-ink transition-colors hover:text-brand-600 dark:text-neutral-50 dark:hover:text-brand-400"
               >
                 <span>{faq.question}</span>
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400">
                   {isOpen ? (
                     <Minus className="h-4 w-4" />
                   ) : (
@@ -52,7 +52,7 @@ export default function FaqAccordion() {
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     className="overflow-hidden"
                   >
-                    <p className="px-5 pb-5 text-sm leading-relaxed text-neutral-500">
+                    <p className="px-5 pb-5 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
                       {faq.answer}
                     </p>
                   </motion.div>

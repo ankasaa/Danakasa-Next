@@ -10,10 +10,10 @@ export default function About() {
       className="mx-auto max-w-6xl scroll-mt-24 px-6 py-16 text-center md:py-24"
     >
       <Reveal>
-        <p className="font-medium text-brand-600">About us</p>
+        <p className="font-medium text-brand-600 dark:text-brand-400">About us</p>
       </Reveal>
       <Reveal delay={0.1}>
-        <h2 className="mt-2 text-3xl font-bold text-ink md:text-5xl">
+        <h2 className="mt-2 text-3xl font-bold text-ink dark:text-neutral-50 md:text-5xl">
           Belajar Finansial skill
         </h2>
       </Reveal>
@@ -33,7 +33,7 @@ export default function About() {
 
         <div className="w-full min-w-[280px] flex-1 text-left">
           <Reveal>
-            <p className="text-neutral-600">
+            <p className="text-neutral-600 dark:text-neutral-400">
               Danakasa berdiri untuk mengedukasi masyarakat agar melek tentang
               finansial.
             </p>
@@ -42,11 +42,11 @@ export default function About() {
           <div className="mt-6 grid grid-cols-3 gap-4">
             {stats.map((stat, index) => (
               <Reveal key={stat.label} delay={index * 0.1}>
-                <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-neutral-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                  <h3 className="text-xl font-bold text-ink md:text-2xl">
+                <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-neutral-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:bg-neutral-900 dark:ring-neutral-800">
+                  <h3 className="text-xl font-bold text-ink dark:text-neutral-50 md:text-2xl">
                     {stat.value}
                   </h3>
-                  <p className="mt-1 text-xs text-neutral-500 md:text-sm">
+                  <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400 md:text-sm">
                     {stat.label}
                   </p>
                 </div>
@@ -64,7 +64,7 @@ export default function About() {
               </Link>
               <Link
                 href="/#contact"
-                className="rounded-full border-2 border-ink px-6 py-3 font-medium text-ink transition-all duration-300 hover:bg-ink hover:text-white"
+                className="rounded-full border-2 border-ink px-6 py-3 font-medium text-ink transition-all duration-300 hover:bg-ink hover:text-white dark:border-neutral-400 dark:text-neutral-100"
               >
                 Contact us
               </Link>

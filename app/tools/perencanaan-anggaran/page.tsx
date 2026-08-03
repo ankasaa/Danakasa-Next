@@ -1,9 +1,11 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ComingSoon from "@/components/ComingSoon";
+import PerencanaanAnggaranCalculator from "@/components/calculators/PerencanaanAnggaranCalculator";
 
 export const metadata = {
   title: "Kalkulator Perencanaan Anggaran — DanaKasa",
+  description:
+    "Alokasikan pendapatan bulanan dengan metode 50/30/20 untuk mengelola keuangan lebih bijak.",
 };
 
 export default function PerencanaanAnggaranPage() {
@@ -11,10 +13,7 @@ export default function PerencanaanAnggaranPage() {
     <>
       <Navbar />
       <main>
-        <ComingSoon
-          title="Kalkulator Perencanaan Anggaran"
-          description="Susun dan kelola anggaran bulanan dengan lebih bijak."
-        />
+        <PerencanaanAnggaranCalculator />
       </main>
       <Footer />
     </>

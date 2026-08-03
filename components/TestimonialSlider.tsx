@@ -41,13 +41,13 @@ export default function TestimonialSlider() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
       <div className="text-center">
-        <p className="text-sm font-semibold uppercase tracking-wider text-brand-500">
+        <p className="text-sm font-semibold uppercase tracking-wider text-brand-500 dark:text-brand-400">
           Testimonials
         </p>
-        <h2 className="mt-3 text-3xl font-bold text-ink md:text-4xl">
+        <h2 className="mt-3 text-3xl font-bold text-ink dark:text-neutral-50 md:text-4xl">
           Real Stories from Our Students
         </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-neutral-500">
+        <p className="mx-auto mt-4 max-w-2xl text-neutral-500 dark:text-neutral-400">
           Dari membangun kepercayaan diri hingga menguasai keterampilan baru,
           platform kami telah membantu banyak orang mencapai tujuan finansial
           mereka.
@@ -73,7 +73,7 @@ export default function TestimonialSlider() {
               className="shrink-0 px-3"
               style={{ width: `${100 / perView}%` }}
             >
-              <article className="flex h-full flex-col rounded-2xl bg-white p-6 shadow-md shadow-neutral-900/5 ring-1 ring-neutral-100 transition-transform duration-300 hover:-translate-y-1">
+              <article className="flex h-full flex-col rounded-2xl bg-white p-6 shadow-md shadow-neutral-900/5 ring-1 ring-neutral-100 transition-transform duration-300 hover:-translate-y-1 dark:bg-neutral-900 dark:ring-neutral-800">
                 <div
                   className="mb-4 flex gap-0.5 text-amber-400"
                   aria-label={`Rating ${testimonial.rating} dari 5 bintang`}
@@ -84,12 +84,12 @@ export default function TestimonialSlider() {
                       className={
                         starIndex < testimonial.rating
                           ? "h-4 w-4 fill-current"
-                          : "h-4 w-4 text-neutral-200"
+                          : "h-4 w-4 text-neutral-200 dark:text-neutral-700"
                       }
                     />
                   ))}
                 </div>
-                <p className="flex-1 text-[15px] leading-relaxed text-neutral-700">
+                <p className="flex-1 text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
                   &ldquo;{testimonial.quote}&rdquo;
                 </p>
                 <div className="mt-5 flex items-center gap-3">
@@ -101,10 +101,10 @@ export default function TestimonialSlider() {
                     className="rounded-full object-cover"
                   />
                   <div>
-                    <strong className="block text-sm text-ink">
+                    <strong className="block text-sm text-ink dark:text-neutral-50">
                       {testimonial.name}
                     </strong>
-                    <span className="block text-xs text-neutral-400">
+                    <span className="block text-xs text-neutral-400 dark:text-neutral-500">
                       {testimonial.role}
                     </span>
                   </div>
@@ -121,9 +121,9 @@ export default function TestimonialSlider() {
           onClick={goPrev}
           disabled={effectiveIndex === 0}
           aria-label="Sebelumnya"
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-neutral-100 transition-all duration-200 hover:scale-110 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-neutral-100 transition-all duration-200 hover:scale-110 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100 dark:bg-neutral-900 dark:ring-neutral-800 dark:hover:bg-neutral-800"
         >
-          <ChevronLeft className="h-5 w-5 text-ink" />
+          <ChevronLeft className="h-5 w-5 text-ink dark:text-neutral-50" />
         </button>
 
         <div className="flex items-center gap-2">
@@ -136,7 +136,7 @@ export default function TestimonialSlider() {
               className={`h-2.5 rounded-full transition-all duration-300 ${
                 dotIndex === effectiveIndex
                   ? "w-6 bg-brand-500"
-                  : "w-2.5 bg-neutral-200 hover:bg-neutral-300"
+                  : "w-2.5 bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600"
               }`}
             />
           ))}
@@ -147,9 +147,9 @@ export default function TestimonialSlider() {
           onClick={goNext}
           disabled={effectiveIndex === maxIndex}
           aria-label="Berikutnya"
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-neutral-100 transition-all duration-200 hover:scale-110 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-neutral-100 transition-all duration-200 hover:scale-110 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100 dark:bg-neutral-900 dark:ring-neutral-800 dark:hover:bg-neutral-800"
         >
-          <ChevronRight className="h-6 w-6 text-ink" />
+          <ChevronRight className="h-6 w-6 text-ink dark:text-neutral-50" />
         </button>
       </div>
     </section>

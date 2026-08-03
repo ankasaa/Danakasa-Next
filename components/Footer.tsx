@@ -21,17 +21,17 @@ const socials: Social[] = [
 
 export default function Footer() {
   return (
-    <footer className="bg-linear-to-r from-[#d4e6fa] to-[#e7dff9] text-neutral-800">
+    <footer className="bg-linear-to-r from-[#d4e6fa] to-[#e7dff9] text-neutral-800 dark:from-neutral-950 dark:to-neutral-900 dark:text-neutral-300">
       <div className="mx-auto max-w-6xl px-6 pb-8 pt-14">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
           <div>
             <Link
               href="/"
-              className="text-xl font-bold text-ink transition-opacity hover:opacity-70"
+              className="text-xl font-bold text-ink transition-opacity hover:opacity-70 dark:text-white"
             >
               {site.name}
             </Link>
-            <p className="mt-4 text-sm leading-relaxed text-neutral-600">
+            <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
               {site.description}
             </p>
             <div className="mt-5 flex gap-3">
@@ -40,7 +40,8 @@ export default function Footer() {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/70 text-neutral-700 transition-all duration-300 hover:scale-110 hover:bg-white hover:text-brand-500"
+                  title="Segera Hadir"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/70 text-neutral-700 transition-all duration-300 hover:scale-110 hover:bg-white hover:text-brand-500 dark:bg-white/10 dark:text-neutral-300 dark:hover:bg-white/15 dark:hover:text-brand-400"
                 >
                   <social.Icon className="h-[18px] w-[18px]" />
                 </a>
@@ -49,13 +50,13 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-base font-bold text-ink">Navigation</h4>
+            <h4 className="text-base font-bold text-ink dark:text-white">Navigation</h4>
             <ul className="mt-4 space-y-2.5">
               {navLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-neutral-700 transition-colors hover:text-brand-500"
+                    className="text-sm text-neutral-700 transition-colors hover:text-brand-500 dark:text-neutral-400 dark:hover:text-brand-400"
                   >
                     {link.label}
                   </Link>
@@ -65,8 +66,8 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-base font-bold text-ink">Information</h4>
-            <div className="mt-4 space-y-2.5 text-sm text-neutral-700">
+            <h4 className="text-base font-bold text-ink dark:text-white">Information</h4>
+            <div className="mt-4 space-y-2.5 text-sm text-neutral-700 dark:text-neutral-400">
               <p>{site.phone}</p>
               <p>{site.email}</p>
               <p>
@@ -81,11 +82,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="my-10 border-t border-neutral-900/15" />
+        <div className="my-10 border-t border-neutral-900/15 dark:border-white/10" />
 
-        <div className="text-center text-sm text-neutral-600">
+        <div className="text-center text-sm text-neutral-600 dark:text-neutral-400">
           © 2025 Finansial website. Designed by{" "}
-          <Link href="/" className="font-medium text-brand-500 hover:underline">
+          <Link href="/" className="font-medium text-brand-500 hover:underline dark:text-brand-400">
             DanaKasa
           </Link>
         </div>
