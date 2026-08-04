@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowLeft, CalendarDays, Clock, User } from "lucide-react";
 import { posts, getPostById } from "@/lib/posts";
+import { Markdown } from "./markdown";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -100,12 +101,7 @@ export default async function BlogDetailPage({ params }: Props) {
               </p>
               <div className="mt-8 space-y-6">
                 {post.body.map((paragraph, index) => (
-                  <p
-                    key={index}
-                    className="leading-[1.9] text-neutral-600 dark:text-neutral-400"
-                  >
-                    {paragraph}
-                  </p>
+                  <Markdown key={index} content={paragraph} />
                 ))}
               </div>
 

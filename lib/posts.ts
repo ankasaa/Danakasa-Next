@@ -38,10 +38,28 @@ export const posts: Post[] = [
     Icon: PiggyBank,
     author: "Tim DanaKasa",
     body: [
-      "Dana darurat adalah tabungan untuk menghadapi situasi tak terduga. Contohnya kehilangan pekerjaan, sakit, atau biaya perbaikan mendadak. Fungsinya bukan untuk mencari untung, melainkan untuk menjaga keuangan tetap aman saat masa sulit datang.",
-      "Tanpa dana darurat, banyak orang terpaksa meminjam uang atau memakai kartu kredit. Akibatnya beban keuangan semakin berat dalam jangka panjang. Karena itu setiap upaya menabung sekarang sangat berharga.",
-      "Langkah pertama adalah menentukan angkanya. Aturan sederhananya, siapkan enam sampai dua belas kali pengeluaran bulanan. Jika kamu masih lajang dengan penghasilan stabil, enam kali sudah cukup. Jika kamu menanggung keluarga, jadikan dua belas kali agar lebih aman.",
-      "Cara terbaik adalah menyisihkan uang di awal bulan, lalu otomatiskan ke rekening tabungan yang terpisah. Mulai dari nominal kecil dan naikkan secara bertahap. Konsisten menabung lebih penting daripada jumlah besar sekali waktu.",
+      `## Panduan Lengkap Membangun Dana Darurat untuk Pemula
+
+Dana darurat (*emergency fund*) adalah pilar paling fundamental dalam piramida perencanaan keuangan yang sehat. Secara definisi, dana ini adalah simpanan uang tunai yang sengaja dipisahkan untuk menghadapi situasi krisis atau pengeluaran mendesak yang tidak terduga. 
+
+Contoh situasi darurat meliputi pemutusan hubungan kerja (PHK), biaya medis mendadak, atau perbaikan aset krusial seperti kendaraan dan rumah. Perlu dipahami bahwa fungsi utama dana darurat bukanlah untuk mencari imbal hasil (*return*) atau keuntungan investasi, melainkan untuk menyediakan likuiditas (uang tunai yang cepat cair) dan jaring pengaman (*safety net*) saat masa sulit datang.
+
+### Mengapa Dana Darurat Sangat Krusial?
+Tanpa adanya alokasi dana darurat, seseorang akan sangat rentan terhadap guncangan ekonomi. Ketika krisis terjadi, mereka sering kali terpaksa mengambil keputusan finansial yang merugikan, seperti mencairkan investasi saat harganya sedang turun, meminjam uang kepada kerabat, atau lebih buruk lagi, terjebak pada jeratan utang berbunga tinggi seperti pinjaman *online* atau kartu kredit. Memiliki dana darurat berarti Anda membeli ketenangan pikiran (*peace of mind*) dan mencegah masalah jangka pendek berubah menjadi beban finansial jangka panjang.
+
+### Berapa Idealnya Jumlah Dana Darurat?
+Langkah pertama untuk memulai adalah menghitung target angkanya. Target ini dihitung berdasarkan **pengeluaran rutin bulanan** (kebutuhan pokok, cicilan tetap, tagihan), bukan berdasarkan pendapatan total. Aturan standar perencana keuangan merekomendasikan:
+- **3 hingga 6 Bulan Pengeluaran:** Sangat ideal bagi mereka yang masih lajang, tidak memiliki tanggungan, dan berstatus sebagai karyawan tetap dengan arus kas yang stabil.
+- **9 hingga 12 Bulan Pengeluaran:** Diwajibkan bagi mereka yang sudah berkeluarga, memiliki anak, atau berprofesi sebagai pekerja lepas (*freelancer*) dan pengusaha yang arus kas bulanannya cenderung berfluktuasi.
+
+### Dimana Sebaiknya Menyimpan Dana Darurat?
+Karena fungsinya untuk keadaan darurat, dana ini harus disimpan pada instrumen yang sangat likuid (mudah ditarik kapan saja) dan rendah risiko. Hindari menyimpan dana darurat di saham atau kripto karena volatilitasnya tinggi. Pilihan terbaik adalah:
+1. Rekening tabungan bank terpisah (hindari penggunaan kartu debit harian).
+2. Rekening Tabungan Bunga Tinggi (*High-Yield Savings Account*).
+3. Reksadana Pasar Uang (RDPU) karena risikonya sangat rendah dan pencairannya relatif cepat.
+
+### Langkah Memulai Menabung
+Membangun dana darurat tidak harus dilakukan dalam semalam. Cara paling efektif adalah dengan **otomatisasi**. Sisihkan minimal 10% hingga 20% dari pendapatan Anda tepat di awal bulan (saat gajian), lalu transfer secara otomatis ke rekening khusus. Konsistensi menabung jauh lebih krusial daripada besaran nominal sesaat. Selalu ingat untuk mengontrol inflasi gaya hidup agar target keamanan finansial Anda lebih cepat tercapai.`,
     ],
   },
   {
