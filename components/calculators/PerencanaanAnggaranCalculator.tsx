@@ -34,7 +34,7 @@ function toNumber(value: string, max = Number.POSITIVE_INFINITY): number {
 }
 
 function maskRupiah(digits: string): string {
-  const cleaned = digits.replace(/\D/g, "");
+  const cleaned = digits.replace(/\D/g, "").slice(0, 11);
   if (!cleaned) return "";
   return "Rp " + Number.parseInt(cleaned, 10).toLocaleString("id-ID");
 }
@@ -305,7 +305,10 @@ export default function PerencanaanAnggaranCalculator() {
                       placeholder={field.placeholder}
                       value={maskRupiah(form[field.key])}
                       onChange={(e) =>
-                        setField(field.key, e.target.value.replace(/\D/g, ""))
+                        setField(
+                          field.key,
+                          e.target.value.replace(/\D/g, "").slice(0, 11),
+                        )
                       }
                       className={inputClasses}
                     />
@@ -333,7 +336,7 @@ export default function PerencanaanAnggaranCalculator() {
           </form>
         </div>
 
-        <div className="rounded-3xl bg-ink p-6 text-white shadow-lg dark:bg-neutral-900 sm:p-8 lg:sticky lg:top-24">
+        <div className="rounded-3xl bg-ink p-6 text-white shadow-lg dark:bg-neutral-900 sm:p-8 lg:sticky lg:top-24" aria-live="polite">
           <AnimatePresence mode="wait">
             {result ? (
               <motion.div

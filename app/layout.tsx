@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import ThemeProvider from "@/components/ThemeProvider";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,6 +20,9 @@ export const metadata: Metadata = {
   title: "DanaKasa — Solusi Cerdas Finansial untuk Semua",
   description:
     "Platform edukasi finansial dengan kalkulator dana darurat, perencanaan pendidikan, pengelolaan anggaran, serta artikel blog seputar keuangan.",
+  icons: {
+    icon: "/logo/danakasa-icon.png?v=3",
+  },
 };
 
 export default function RootLayout({
@@ -31,8 +36,12 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${poppins.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        <ThemeProvider>{children}</ThemeProvider>
+      <body className="flex min-h-full flex-col bg-background text-foreground">
+        <ThemeProvider>
+          <Navbar />
+          <div className="flex flex-1 flex-col">{children}</div>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

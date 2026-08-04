@@ -70,8 +70,7 @@ export default function TestimonialSlider() {
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.name}
-              className="shrink-0 px-3"
-              style={{ width: `${100 / perView}%` }}
+              className="w-full shrink-0 px-3 sm:w-1/2 lg:w-1/3"
             >
               <article className="flex h-full flex-col rounded-2xl bg-white p-6 shadow-md shadow-neutral-900/5 ring-1 ring-neutral-100 transition-transform duration-300 hover:-translate-y-1 dark:bg-neutral-900 dark:ring-neutral-800">
                 <div

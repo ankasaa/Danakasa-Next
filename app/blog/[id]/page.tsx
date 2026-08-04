@@ -1,8 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowLeft, CalendarDays, Clock, User } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { posts, getPostById } from "@/lib/posts";
 
 type Props = {
@@ -34,7 +32,6 @@ export default async function BlogDetailPage({ params }: Props) {
 
   return (
     <>
-      <Navbar />
       <main className="mx-auto max-w-6xl px-6 py-12 md:py-16">
         {!post ? (
           <div className="flex min-h-[50vh] flex-col items-center justify-center text-center">
@@ -143,7 +140,6 @@ export default async function BlogDetailPage({ params }: Props) {
           </article>
         )}
       </main>
-      <Footer />
     </>
   );
 }

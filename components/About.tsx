@@ -18,20 +18,20 @@ export default function About() {
         </h2>
       </Reveal>
 
-      <div className="mt-12 flex flex-wrap items-center justify-center gap-10 md:gap-16">
-        <Reveal className="w-full min-w-[280px] flex-1">
+      <div className="mt-12 flex flex-col gap-8 lg:flex-row lg:gap-12">
+        <Reveal className="w-full lg:w-1/2">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-lg shadow-neutral-900/10">
             <Image
               src="/img/g2.jpg"
               alt="Belajar mengelola keuangan"
               fill
-              sizes="(min-width: 768px) 50vw, 100vw"
-              className="object-cover"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="h-auto w-full object-cover"
             />
           </div>
         </Reveal>
 
-        <div className="w-full min-w-[280px] flex-1 text-left">
+        <div className="w-full text-left lg:w-1/2">
           <Reveal>
             <p className="text-neutral-600 dark:text-neutral-400">
               Danakasa berdiri untuk mengedukasi masyarakat agar melek tentang
@@ -39,7 +39,7 @@ export default function About() {
             </p>
           </Reveal>
 
-          <div className="mt-6 grid grid-cols-3 gap-4">
+          <div className="mt-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
             {stats.map((stat, index) => (
               <Reveal key={stat.label} delay={index * 0.1}>
                 <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-neutral-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:bg-neutral-900 dark:ring-neutral-800">
@@ -55,16 +55,16 @@ export default function About() {
           </div>
 
           <Reveal delay={0.2}>
-            <div className="mt-6 flex flex-wrap gap-4">
+            <div className="mt-6 flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
               <Link
                 href="/tools"
-                className="rounded-full bg-ink px-6 py-3 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-700"
+                className="w-full rounded-full bg-neutral-900 px-6 py-3 text-center font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-800 sm:w-auto dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
               >
                 Explore content
               </Link>
               <Link
                 href="/#contact"
-                className="rounded-full border-2 border-ink px-6 py-3 font-medium text-ink transition-all duration-300 hover:bg-ink hover:text-white dark:border-neutral-400 dark:text-neutral-100"
+                className="w-full rounded-full border-2 border-neutral-300 px-6 py-3 text-center font-medium text-neutral-900 transition-all duration-300 hover:bg-neutral-50 sm:w-auto dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800"
               >
                 Contact us
               </Link>

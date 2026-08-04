@@ -1,5 +1,3 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import DanaDaruratCalculator from "@/components/calculators/DanaDaruratCalculator";
 
 export const metadata = {
@@ -10,12 +8,8 @@ export const metadata = {
 
 export default function DanaDaruratPage() {
   return (
-    <>
-      <Navbar />
-      <main>
-        <DanaDaruratCalculator />
-      </main>
-      <Footer />
-    </>
+    <main>
+      <DanaDaruratCalculator />
+    </main>
   );
 }

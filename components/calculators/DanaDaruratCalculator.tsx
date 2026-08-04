@@ -40,9 +40,17 @@ function toNumber(value: string, max = Number.POSITIVE_INFINITY): number {
 }
 
 function maskRupiah(digits: string): string {
-  const cleaned = digits.replace(/\D/g, "");
+  const cleaned = digits.replace(/\D/g, "").slice(0, 11);
   if (!cleaned) return "";
   return "Rp " + Number.parseInt(cleaned, 10).toLocaleString("id-ID");
+}
+
+function clampDigits(value: string, max: number): string {
+  const cleaned = value.replace(/\D/g, "");
+  if (!cleaned) return "";
+  const parsed = Number.parseInt(cleaned, 10);
+  if (!Number.isFinite(parsed)) return "";
+  return String(Math.min(parsed, max));
 }
 
 function AnimatedValue({ value }: { value: number }) {
@@ -123,6 +131,7 @@ type FieldConfig = {
   options?: { value: string; label: string }[];
   placeholder?: string;
   hint?: string;
+  max?: number;
 };
 
 const fields: FieldConfig[] = [
@@ -150,6 +159,7 @@ const fields: FieldConfig[] = [
     type: "number",
     placeholder: "contoh: 2",
     hint: "Anak atau keluarga yang menjadi tanggunganmu.",
+    max: MAX_TANGGUNGAN,
   },
   {
     key: "pekerjaan",
@@ -192,6 +202,7 @@ const fields: FieldConfig[] = [
     type: "number",
     placeholder: "contoh: 12",
     hint: "Misalnya 12 bulan atau 1 tahun.",
+    max: MAX_TARGET_MONTHS,
   },
 ];
 
@@ -273,7 +284,7 @@ export default function DanaDaruratCalculator() {
       defisit,
       bulananDibutuhkan,
       targetWaktu,
-      tercapai: tabungan >= target,
+      tercapai: tabungan >= target && pengeluaran > 0,
     });
   };
 
@@ -347,7 +358,12 @@ export default function DanaDaruratCalculator() {
                             field.key,
                             field.type === "text"
                               ? e.target.value
-                              : e.target.value.replace(/\D/g, ""),
+                              : field.type === "number"
+                                ? clampDigits(
+                                    e.target.value,
+                                    field.max ?? Number.MAX_SAFE_INTEGER,
+                                  )
+                                : e.target.value.replace(/\D/g, "").slice(0, 11),
                           )
                         }
                         className={inputClasses}
@@ -377,7 +393,7 @@ export default function DanaDaruratCalculator() {
           </form>
         </div>
 
-        <div className="rounded-3xl bg-ink p-6 text-white shadow-lg dark:bg-neutral-900 sm:p-8 lg:sticky lg:top-24">
+        <div className="rounded-3xl bg-ink p-6 text-white shadow-lg dark:bg-neutral-900 sm:p-8 lg:sticky lg:top-24" aria-live="polite">
           <AnimatePresence mode="wait">
             {result ? (
               <motion.div

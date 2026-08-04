@@ -81,22 +81,47 @@ export default function ContactForm() {
         <div className="rounded-3xl bg-white p-6 shadow-xl shadow-neutral-900/5 ring-1 ring-neutral-100 dark:bg-neutral-900 dark:ring-neutral-800 sm:p-10">
           <form onSubmit={handleSubmit} className="space-y-4" noValidate={false}>
             <div className="grid gap-4 sm:grid-cols-2">
-              <input
-                type="text"
-                name="name"
-                placeholder="Your Name"
-                required
-                className={inputClasses}
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                required
-                className={inputClasses}
-              />
+              <div>
+                <label
+                  htmlFor="contact-name"
+                  className="sr-only"
+                >
+                  Nama
+                </label>
+                <input
+                  id="contact-name"
+                  type="text"
+                  name="name"
+                  placeholder="Your Name"
+                  required
+                  className={inputClasses}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="contact-email"
+                  className="sr-only"
+                >
+                  Email
+                </label>
+                <input
+                  id="contact-email"
+                  type="email"
+                  name="email"
+                  placeholder="Your Email"
+                  required
+                  className={inputClasses}
+                />
+              </div>
             </div>
+            <label
+              htmlFor="contact-message"
+              className="sr-only"
+            >
+              Pesan
+            </label>
             <textarea
+              id="contact-message"
               name="message"
               placeholder="How Can We Help?"
               required
@@ -106,6 +131,7 @@ export default function ContactForm() {
             <label className="flex cursor-pointer items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
               <input
                 type="checkbox"
+                name="newsletter"
                 className="h-4 w-4 rounded border-neutral-300 text-brand-500 focus:ring-brand-500"
               />
               Subscribe to Newsletter
@@ -113,6 +139,7 @@ export default function ContactForm() {
             <button
               type="submit"
               disabled={status === "submitting"}
+              aria-busy={status === "submitting"}
               className="w-full rounded-xl bg-ink py-3.5 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
             >
               {status === "submitting" ? "Mengirim..." : "Send Message"}
@@ -122,6 +149,7 @@ export default function ContactForm() {
           <AnimatePresence>
             {status === "success" && (
               <motion.p
+                role="status"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}

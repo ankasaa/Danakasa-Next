@@ -1,4 +1,5 @@
 import type { ComponentType, SVGProps } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   InstagramIcon,
@@ -9,54 +10,67 @@ import { navLinks, site } from "@/lib/site";
 
 type Social = {
   label: string;
-  href: string;
   Icon: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
 const socials: Social[] = [
-  { label: "Instagram", href: "#", Icon: InstagramIcon },
-  { label: "Twitter", href: "#", Icon: TwitterIcon },
-  { label: "LinkedIn", href: "#", Icon: LinkedinIcon },
+  { label: "Instagram", Icon: InstagramIcon },
+  { label: "Twitter", Icon: TwitterIcon },
+  { label: "LinkedIn", Icon: LinkedinIcon },
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-linear-to-r from-[#d4e6fa] to-[#e7dff9] text-neutral-800 dark:from-neutral-950 dark:to-neutral-900 dark:text-neutral-300">
-      <div className="mx-auto max-w-6xl px-6 pb-8 pt-14">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+    <footer className="border-t border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950">
+      <div className="mx-auto max-w-6xl px-6 pb-8 pt-16">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
           <div>
             <Link
               href="/"
-              className="text-xl font-bold text-ink transition-opacity hover:opacity-70 dark:text-white"
+              aria-label="DanaKasa — Beranda"
+              className="-ml-2 inline-flex items-center transition-opacity duration-200 hover:opacity-80 md:-ml-4"
             >
-              {site.name}
+              <Image
+                src="/logo/danakasa-hitam.png"
+                alt="DanaKasa"
+                width={192}
+                height={48}
+                className="block h-12 w-auto object-contain transform scale-[3] origin-left md:h-16 md:scale-[3.5] dark:hidden"
+              />
+              <Image
+                src="/logo/danakasa-putih.png"
+                alt="DanaKasa"
+                width={192}
+                height={48}
+                className="hidden h-12 w-auto object-contain transform scale-[3] origin-left md:h-16 md:scale-[3.5] dark:block"
+              />
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
               {site.description}
             </p>
-            <div className="mt-5 flex gap-3">
+            <div className="mt-6 flex gap-3">
               {socials.map((social) => (
-                <a
+                <span
                   key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
+                  role="img"
+                  aria-label={`${social.label} — segera hadir`}
                   title="Segera Hadir"
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/70 text-neutral-700 transition-all duration-300 hover:scale-110 hover:bg-white hover:text-brand-500 dark:bg-white/10 dark:text-neutral-300 dark:hover:bg-white/15 dark:hover:text-brand-400"
+                  className="flex h-10 w-10 cursor-default items-center justify-center rounded-full bg-white text-neutral-600 shadow-sm ring-1 ring-neutral-200 transition-all duration-200 hover:-translate-y-1 hover:bg-neutral-200 hover:text-brand-600 hover:ring-neutral-300 dark:bg-neutral-900 dark:text-neutral-400 dark:ring-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-brand-400 dark:hover:ring-neutral-600"
                 >
                   <social.Icon className="h-[18px] w-[18px]" />
-                </a>
+                </span>
               ))}
             </div>
           </div>
 
           <div>
-            <h4 className="text-base font-bold text-ink dark:text-white">Navigation</h4>
-            <ul className="mt-4 space-y-2.5">
+            <h4 className="text-lg font-bold text-ink dark:text-white">Navigation</h4>
+            <ul className="mt-6 space-y-3">
               {navLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-neutral-700 transition-colors hover:text-brand-500 dark:text-neutral-400 dark:hover:text-brand-400"
+                    className="text-sm text-neutral-600 transition-colors duration-200 hover:text-brand-600 dark:text-neutral-400 dark:hover:text-brand-400"
                   >
                     {link.label}
                   </Link>
@@ -66,10 +80,14 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-base font-bold text-ink dark:text-white">Information</h4>
-            <div className="mt-4 space-y-2.5 text-sm text-neutral-700 dark:text-neutral-400">
-              <p>{site.phone}</p>
-              <p>{site.email}</p>
+            <h4 className="text-lg font-bold text-ink dark:text-white">Information</h4>
+            <div className="mt-6 space-y-3 text-sm text-neutral-600 dark:text-neutral-400">
+              <p className="transition-colors duration-200 hover:text-brand-600 dark:hover:text-brand-400">
+                {site.phone}
+              </p>
+              <p className="transition-colors duration-200 hover:text-brand-600 dark:hover:text-brand-400">
+                {site.email}
+              </p>
               <p>
                 {site.address.map((line, index) => (
                   <span key={line}>
@@ -82,11 +100,14 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="my-10 border-t border-neutral-900/15 dark:border-white/10" />
+        <div className="my-10 border-t border-neutral-200 dark:border-neutral-800" />
 
-        <div className="text-center text-sm text-neutral-600 dark:text-neutral-400">
-          © 2025 Finansial website. Designed by{" "}
-          <Link href="/" className="font-medium text-brand-500 hover:underline dark:text-brand-400">
+        <div className="text-center text-sm text-neutral-500">
+          © {new Date().getFullYear()} Finansial website. Designed by{" "}
+          <Link
+            href="/"
+            className="font-medium text-brand-600 transition-colors duration-200 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+          >
             DanaKasa
           </Link>
         </div>

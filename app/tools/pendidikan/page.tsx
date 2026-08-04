@@ -1,5 +1,3 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import PendidikanCalculator from "@/components/calculators/PendidikanCalculator";
 
 export const metadata = {
@@ -10,12 +8,8 @@ export const metadata = {
 
 export default function PendidikanPage() {
   return (
-    <>
-      <Navbar />
-      <main>
-        <PendidikanCalculator />
-      </main>
-      <Footer />
-    </>
+    <main>
+      <PendidikanCalculator />
+    </main>
   );
 }

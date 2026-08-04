@@ -1,5 +1,3 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import PerencanaanAnggaranCalculator from "@/components/calculators/PerencanaanAnggaranCalculator";
 
 export const metadata = {
@@ -10,12 +8,8 @@ export const metadata = {
 
 export default function PerencanaanAnggaranPage() {
   return (
-    <>
-      <Navbar />
-      <main>
-        <PerencanaanAnggaranCalculator />
-      </main>
-      <Footer />
-    </>
+    <main>
+      <PerencanaanAnggaranCalculator />
+    </main>
   );
 }

@@ -1,14 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, Moon, Sun, X } from "lucide-react";
-import { navLinks, site } from "@/lib/site";
+import { navLinks } from "@/lib/site";
+
+const emptySubscribe = () => () => {};
 
 function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+
+  if (!mounted) {
+    return (
+      <div
+        aria-hidden="true"
+        className="h-10 w-10 rounded-full bg-neutral-100 dark:bg-white/10"
+      />
+    );
+  }
 
   const isDark = resolvedTheme === "dark";
 
@@ -54,9 +71,24 @@ export default function Navbar() {
     >
       <Link
         href="/"
-        className="text-xl font-bold tracking-tight text-ink transition-opacity hover:opacity-70 dark:text-white"
+        aria-label="DanaKasa — Beranda"
+        className="-mr-8 flex shrink-0 items-center transition-opacity hover:opacity-80 md:-mr-12"
       >
-        {site.name}
+        <Image
+          src="/logo/danakasa-hitam.png"
+          alt="DanaKasa"
+          width={192}
+          height={48}
+          priority
+          className="block h-10 w-auto object-contain transform scale-[2] origin-left md:h-12 md:scale-[2.5] dark:hidden"
+        />
+        <Image
+          src="/logo/danakasa-putih.png"
+          alt="DanaKasa"
+          width={192}
+          height={48}
+          className="hidden h-10 w-auto object-contain transform scale-[2] origin-left md:h-12 md:scale-[2.5] dark:block"
+        />
       </Link>
 
       <nav

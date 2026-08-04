@@ -4,8 +4,6 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock, Newspaper, Search } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { posts, type Category, type Post } from "@/lib/posts";
 
 const MotionLink = motion.create(Link);
@@ -82,7 +80,6 @@ export default function BlogPage() {
 
   return (
     <>
-      <Navbar />
       <main>
         <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
           <div className="mx-auto max-w-2xl text-center">
@@ -119,6 +116,7 @@ export default function BlogPage() {
                     key={category}
                     type="button"
                     onClick={() => setSelectedCategory(category)}
+                    aria-pressed={active}
                     className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 ${
                       active
                         ? "bg-brand-600 text-white shadow-md shadow-brand-500/25"
@@ -228,7 +226,6 @@ export default function BlogPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }

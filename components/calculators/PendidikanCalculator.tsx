@@ -37,9 +37,17 @@ function toNumber(value: string, max = Number.POSITIVE_INFINITY): number {
 }
 
 function maskRupiah(digits: string): string {
-  const cleaned = digits.replace(/\D/g, "");
+  const cleaned = digits.replace(/\D/g, "").slice(0, 11);
   if (!cleaned) return "";
   return "Rp " + Number.parseInt(cleaned, 10).toLocaleString("id-ID");
+}
+
+function clampDigits(value: string, max: number): string {
+  const cleaned = value.replace(/\D/g, "");
+  if (!cleaned) return "";
+  const parsed = Number.parseInt(cleaned, 10);
+  if (!Number.isFinite(parsed)) return "";
+  return String(Math.min(parsed, max));
 }
 
 function AnimatedValue({ value }: { value: number }) {
@@ -306,8 +314,10 @@ export default function PendidikanCalculator() {
                         setField(
                           field.key,
                           field.isCurrency
-                            ? e.target.value.replace(/\D/g, "")
-                            : e.target.value,
+                            ? e.target.value.replace(/\D/g, "").slice(0, 11)
+                            : field.max
+                              ? clampDigits(e.target.value, field.max)
+                              : e.target.value,
                         )
                       }
                       className={inputClasses}
@@ -339,7 +349,7 @@ export default function PendidikanCalculator() {
           </form>
         </div>
 
-        <div className="rounded-3xl bg-ink p-6 text-white shadow-lg dark:bg-neutral-900 sm:p-8 lg:sticky lg:top-24">
+        <div className="rounded-3xl bg-ink p-6 text-white shadow-lg dark:bg-neutral-900 sm:p-8 lg:sticky lg:top-24" aria-live="polite">
           <AnimatePresence mode="wait">
             {result ? (
               <motion.div
