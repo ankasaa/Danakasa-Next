@@ -1,3 +1,32 @@
+# 💰 DanaKasa - Financial Planning & Education Platform
+
+DanaKasa adalah platform edukasi finansial modern yang dirancang untuk membantu pengguna mengelola keuangan pribadi, merencanakan anggaran, dan menyiapkan dana darurat dengan cerdas. Dibangun dengan fokus pada pengalaman pengguna (UX) yang premium dan performa tinggi.
+
+🔗 **Live Demo:** [https://danakasa-next.vercel.app/](https://danakasa-next.vercel.app/)
+
+## ✨ Fitur Utama
+
+- **Smart Financial Calculators:** Kalkulator interaktif untuk menghitung kebutuhan dana darurat, perencanaan pendidikan, dan alokasi anggaran secara presisi.
+- **Premium UI/UX:** Tampilan antarmuka yang modern, bersih, dan 100% responsif di semua ukuran layar (Mobile, Tablet, Desktop).
+- **Dynamic Theme (Dark/Light Mode):** Peralihan mode tema yang mulus dan elegan, terintegrasi penuh tanpa *hydration error*.
+- **Interactive Animations:** Komponen antarmuka yang hidup, termasuk *slider* testimoni *auto-play* yang dibangun dengan Framer Motion.
+
+## 🛠️ Teknologi yang Digunakan
+
+- **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animation:** [Framer Motion](https://www.framer.com/motion/)
+- **Deployment:** [Vercel](https://vercel.com/)
+
+## 🚀 Cara Menjalankan di Komputer Lokal (Local Development)
+
+Jika Anda ingin menjalankan atau mengembangkan proyek ini di mesin lokal, ikuti langkah-langkah berikut:
+
+1. **Clone repositori ini:**
+   ```bash
+   git clone [https://github.com/ankasaa/Danakasa-Next.git](https://github.com/ankasaa/Danakasa-Next.git)
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
