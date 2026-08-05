@@ -13,7 +13,7 @@ DanaKasa adalah platform edukasi finansial modern yang dirancang untuk membantu 
 
 ## 🛠️ Teknologi yang Digunakan
 
-- **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
 - **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
 - **Animation:** [Framer Motion](https://www.framer.com/motion/)
