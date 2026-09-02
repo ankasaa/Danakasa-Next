@@ -1,5 +1,15 @@
 import Link from "next/link";
-import { Calculator, GraduationCap, PiggyBank, type LucideIcon } from "lucide-react";
+import type { Metadata } from "next";
+import {
+  Calculator,
+  GraduationCap,
+  PiggyBank,
+  TrendingUp,
+  Wallet,
+  Target,
+  type LucideIcon,
+} from "lucide-react";
+import { siteUrl } from "@/lib/site";
 
 type Tool = {
   title: string;
@@ -27,11 +37,36 @@ const tools: Tool[] = [
     href: "/tools/perencanaan-anggaran",
     Icon: Calculator,
   },
+  {
+    title: "Kalkulator Investasi",
+    description: "Hitung perkembangan investasi dengan return, inflasi, dan durasi.",
+    href: "/tools/investasi",
+    Icon: TrendingUp,
+  },
+  {
+    title: "Kalkulator Utang & Kredit",
+    description: "Hitung cicilan, total bunga, dan bandingkan tenor pinjaman.",
+    href: "/tools/utang-kredit",
+    Icon: Wallet,
+  },
+  {
+    title: "Kalkulator Pensiun",
+    description: "Rencanakan dana pensiun berdasarkan usia dan pengeluaranmu.",
+    href: "/tools/pensiun",
+    Icon: Target,
+  },
 ];
 
-export const metadata = {
-  title: "Tools — DanaKasa",
-  description: "Kalkulator finansial untuk dana darurat, pendidikan, dan perencanaan anggaran.",
+export const metadata: Metadata = {
+  title: "Kalkulator Finansial",
+  description:
+    "Kalkulator finansial untuk dana darurat, pendidikan, investasi, utang, anggaran, dan pensiun.",
+  openGraph: {
+    title: "Kalkulator Finansial | DanaKasa",
+    description:
+      "Kalkulator finansial untuk dana darurat, pendidikan, investasi, utang, anggaran, dan pensiun.",
+    url: `${siteUrl}/tools`,
+  },
 };
 
 export default function ToolsIndexPage() {
@@ -50,7 +85,7 @@ export default function ToolsIndexPage() {
         </p>
       </div>
 
-      <div className="mt-14 grid gap-6 sm:grid-cols-3">
+      <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {tools.map((tool) => (
           <Link
             key={tool.href}
@@ -60,7 +95,9 @@ export default function ToolsIndexPage() {
             <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition-colors group-hover:bg-brand-500 group-hover:text-white dark:bg-brand-900/20 dark:text-brand-400">
               <tool.Icon className="h-6 w-6" />
             </span>
-            <h2 className="mt-5 text-lg font-semibold text-ink dark:text-neutral-50">{tool.title}</h2>
+            <h2 className="mt-5 text-lg font-semibold text-ink dark:text-neutral-50">
+              {tool.title}
+            </h2>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
               {tool.description}
             </p>

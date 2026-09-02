@@ -6,17 +6,18 @@ import {
   LinkedinIcon,
   TwitterIcon,
 } from "@/components/SocialIcon";
-import { navLinks, site } from "@/lib/site";
+import { navLinks, site, socials } from "@/lib/site";
 
 type Social = {
   label: string;
+  href: string;
   Icon: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
-const socials: Social[] = [
-  { label: "Instagram", Icon: InstagramIcon },
-  { label: "Twitter", Icon: TwitterIcon },
-  { label: "LinkedIn", Icon: LinkedinIcon },
+const socialItems: Social[] = [
+  { label: "Instagram", href: socials.instagram, Icon: InstagramIcon },
+  { label: "Twitter", href: socials.twitter, Icon: TwitterIcon },
+  { label: "LinkedIn", href: socials.linkedin, Icon: LinkedinIcon },
 ];
 
 export default function Footer() {
@@ -49,22 +50,25 @@ export default function Footer() {
               {site.description}
             </p>
             <div className="mt-6 flex gap-3">
-              {socials.map((social) => (
-                <span
+              {socialItems.map((social) => (
+                <a
                   key={social.label}
-                  role="img"
-                  aria-label={`${social.label} — segera hadir`}
-                  title="Segera Hadir"
-                  className="flex h-10 w-10 cursor-default items-center justify-center rounded-full bg-white text-neutral-600 shadow-sm ring-1 ring-neutral-200 transition-all duration-200 hover:-translate-y-1 hover:bg-neutral-200 hover:text-brand-600 hover:ring-neutral-300 dark:bg-neutral-900 dark:text-neutral-400 dark:ring-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-brand-400 dark:hover:ring-neutral-600"
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-neutral-600 shadow-sm ring-1 ring-neutral-200 transition-all duration-200 hover:-translate-y-1 hover:bg-neutral-200 hover:text-brand-600 hover:ring-neutral-300 dark:bg-neutral-900 dark:text-neutral-400 dark:ring-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-brand-400 dark:hover:ring-neutral-600"
                 >
                   <social.Icon className="h-[18px] w-[18px]" />
-                </span>
+                </a>
               ))}
             </div>
           </div>
 
           <div>
-            <h4 className="text-lg font-bold text-ink dark:text-white">Navigation</h4>
+            <h4 className="text-lg font-bold text-ink dark:text-white">
+              Navigasi
+            </h4>
             <ul className="mt-6 space-y-3">
               {navLinks.map((link) => (
                 <li key={link.label}>
@@ -80,7 +84,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-lg font-bold text-ink dark:text-white">Information</h4>
+            <h4 className="text-lg font-bold text-ink dark:text-white">
+              Informasi
+            </h4>
             <div className="mt-6 space-y-3 text-sm text-neutral-600 dark:text-neutral-400">
               <p className="transition-colors duration-200 hover:text-brand-600 dark:hover:text-brand-400">
                 {site.phone}
@@ -103,13 +109,14 @@ export default function Footer() {
         <div className="my-10 border-t border-neutral-200 dark:border-neutral-800" />
 
         <div className="text-center text-sm text-neutral-500">
-          © {new Date().getFullYear()} Finansial website. Designed by{" "}
+          &copy; {new Date().getFullYear()}{" "}
           <Link
             href="/"
             className="font-medium text-brand-600 transition-colors duration-200 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
           >
-            DanaKasa
+            {site.name}
           </Link>
+          . Edukasi finansial untuk semua.
         </div>
       </div>
     </footer>

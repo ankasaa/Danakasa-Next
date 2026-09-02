@@ -1,25 +1,52 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircle2, MessageSquare, Phone } from "lucide-react";
+import { CheckCircle2, AlertCircle, MessageSquare, Phone } from "lucide-react";
 import { site } from "@/lib/site";
 
-type Status = "idle" | "submitting" | "success";
+type Status = "idle" | "submitting" | "success" | "error";
 
 const inputClasses =
   "w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-ink transition placeholder:text-neutral-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-100 dark:placeholder:text-neutral-500";
 
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setStatus("submitting");
-    window.setTimeout(() => {
-      event.currentTarget.reset();
+    setErrorMessage("");
+
+    const formData = new FormData(event.currentTarget);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const message = formData.get("message") as string;
+    const newsletter = formData.get("newsletter") === "on";
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message, newsletter }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStatus("error");
+        setErrorMessage(data.error || "Gagal mengirim pesan. Coba lagi.");
+        return;
+      }
+
+      formRef.current?.reset();
       setStatus("success");
-    }, 900);
+    } catch {
+      setStatus("error");
+      setErrorMessage("Gagal terhubung ke server. Periksa koneksi Anda.");
+    }
   };
 
   return (
@@ -43,7 +70,9 @@ export default function ContactForm() {
                 <MessageSquare className="h-5 w-5" />
               </span>
               <div>
-                <h4 className="font-semibold text-ink dark:text-neutral-50">Message Us</h4>
+                <h4 className="font-semibold text-ink dark:text-neutral-50">
+                  Message Us
+                </h4>
                 <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
                   Gunakan sistem obrolan daring kami untuk mengirim pesan
                   kepada kami dan mendapatkan dukungan.
@@ -62,7 +91,9 @@ export default function ContactForm() {
                 <Phone className="h-5 w-5" />
               </span>
               <div>
-                <h4 className="font-semibold text-ink dark:text-neutral-50">Call Us</h4>
+                <h4 className="font-semibold text-ink dark:text-neutral-50">
+                  Call Us
+                </h4>
                 <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
                   Ayo ngobrol - tidak ada yang lebih baik daripada berbicara
                   dengan manusia lain.
@@ -79,13 +110,15 @@ export default function ContactForm() {
         </div>
 
         <div className="rounded-3xl bg-white p-6 shadow-xl shadow-neutral-900/5 ring-1 ring-neutral-100 dark:bg-neutral-900 dark:ring-neutral-800 sm:p-10">
-          <form onSubmit={handleSubmit} className="space-y-4" noValidate={false}>
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit}
+            className="space-y-4"
+            noValidate={false}
+          >
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label
-                  htmlFor="contact-name"
-                  className="sr-only"
-                >
+                <label htmlFor="contact-name" className="sr-only">
                   Nama
                 </label>
                 <input
@@ -94,14 +127,12 @@ export default function ContactForm() {
                   name="name"
                   placeholder="Your Name"
                   required
+                  minLength={2}
                   className={inputClasses}
                 />
               </div>
               <div>
-                <label
-                  htmlFor="contact-email"
-                  className="sr-only"
-                >
+                <label htmlFor="contact-email" className="sr-only">
                   Email
                 </label>
                 <input
@@ -114,10 +145,7 @@ export default function ContactForm() {
                 />
               </div>
             </div>
-            <label
-              htmlFor="contact-message"
-              className="sr-only"
-            >
+            <label htmlFor="contact-message" className="sr-only">
               Pesan
             </label>
             <textarea
@@ -125,6 +153,7 @@ export default function ContactForm() {
               name="message"
               placeholder="How Can We Help?"
               required
+              minLength={10}
               rows={6}
               className={`${inputClasses} h-auto resize-none`}
             />
@@ -156,7 +185,19 @@ export default function ContactForm() {
                 className="mt-4 flex items-center gap-2 text-sm font-medium text-emerald-600 dark:text-emerald-400"
               >
                 <CheckCircle2 className="h-4 w-4" />
-                Message sent successfully!
+                Pesan berhasil dikirim!
+              </motion.p>
+            )}
+            {status === "error" && (
+              <motion.p
+                role="alert"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="mt-4 flex items-center gap-2 text-sm font-medium text-red-600 dark:text-red-400"
+              >
+                <AlertCircle className="h-4 w-4" />
+                {errorMessage}
               </motion.p>
             )}
           </AnimatePresence>

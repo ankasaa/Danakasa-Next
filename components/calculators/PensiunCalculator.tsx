@@ -4,19 +4,13 @@ import { useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertTriangle,
-  Baby,
-  Briefcase,
   CalendarClock,
   CheckCircle2,
   PiggyBank,
   RotateCcw,
-  ShieldCheck,
   Sparkles,
   Target,
   TrendingUp,
-  User,
-  Users,
-  Wallet,
   type LucideIcon,
 } from "lucide-react";
 
@@ -24,77 +18,43 @@ import {
   formatIDR,
   maskRupiah,
   clampDigits,
-  toNumber,
   AnimatedValue,
 } from "@/lib/calculator-utils";
 import PrintButton from "@/components/calculators/PrintButton";
 
-const MAX_CURRENCY = 99_999_999_999;
-const MAX_TANGGUNGAN = 10;
-const MAX_TARGET_MONTHS = 120;
-
 type FormState = {
-  nama: string;
-  status: string;
-  tanggungan: string;
-  pekerjaan: string;
-  penghasilan: string;
-  pengeluaran: string;
-  tabungan: string;
-  targetWaktu: string;
+  usiaSaatIni: string;
+  usiaPensiun: string;
+  pengeluaranBulanan: string;
+  inflasi: string;
+  returnInvestasi: string;
+  danaSaatIni: string;
 };
 
 const defaultForm: FormState = {
-  nama: "",
-  status: "lajang",
-  tanggungan: "",
-  pekerjaan: "tetap",
-  penghasilan: "",
-  pengeluaran: "",
-  tabungan: "",
-  targetWaktu: "",
+  usiaSaatIni: "",
+  usiaPensiun: "",
+  pengeluaranBulanan: "",
+  inflasi: "",
+  returnInvestasi: "",
+  danaSaatIni: "",
 };
 
 const exampleForm: FormState = {
-  nama: "Budi Santoso",
-  status: "menikah",
-  tanggungan: "2",
-  pekerjaan: "freelancer",
-  penghasilan: "12000000",
-  pengeluaran: "8000000",
-  tabungan: "25000000",
-  targetWaktu: "12",
+  usiaSaatIni: "30",
+  usiaPensiun: "55",
+  pengeluaranBulanan: "10000000",
+  inflasi: "5",
+  returnInvestasi: "10",
+  danaSaatIni: "50000000",
 };
-
-const statusLabels: Record<string, string> = {
-  lajang: "Lajang",
-  menikah: "Menikah",
-};
-
-const pekerjaanLabels: Record<string, string> = {
-  tetap: "Pegawai Tetap",
-  kontrak: "Pekerja Kontrak",
-  freelancer: "Freelancer / Pengusaha",
-};
-
-const statusOptions = [
-  { value: "lajang", label: "Lajang" },
-  { value: "menikah", label: "Menikah" },
-];
-
-const pekerjaanOptions = [
-  { value: "tetap", label: "Pegawai Tetap" },
-  { value: "kontrak", label: "Pekerja Kontrak" },
-  { value: "freelancer", label: "Freelancer / Pengusaha" },
-];
 
 type FieldConfig = {
   key: keyof FormState;
   id: string;
   label: string;
   Icon: LucideIcon;
-  type: "text" | "number" | "select" | "currency";
-  options?: { value: string; label: string }[];
+  type: "number" | "currency" | "percent";
   placeholder?: string;
   hint?: string;
   max?: number;
@@ -102,91 +62,78 @@ type FieldConfig = {
 
 const fields: FieldConfig[] = [
   {
-    key: "nama",
-    id: "darurat-nama",
-    label: "Nama",
-    Icon: User,
-    type: "text",
-    placeholder: "contoh: Budi Santoso",
-  },
-  {
-    key: "status",
-    id: "darurat-status",
-    label: "Status",
-    Icon: Users,
-    type: "select",
-    options: statusOptions,
-  },
-  {
-    key: "tanggungan",
-    id: "darurat-tanggungan",
-    label: "Jumlah Tanggungan",
-    Icon: Baby,
+    key: "usiaSaatIni",
+    id: "pensiun-usia",
+    label: "Usia Saat Ini",
+    Icon: Target,
     type: "number",
-    placeholder: "contoh: 2",
-    hint: "Anak atau keluarga yang menjadi tanggunganmu.",
-    max: MAX_TANGGUNGAN,
+    placeholder: "contoh: 30",
+    hint: "Usia kamu sekarang dalam tahun.",
+    max: 80,
   },
   {
-    key: "pekerjaan",
-    id: "darurat-pekerjaan",
-    label: "Jenis Pekerjaan",
-    Icon: Briefcase,
-    type: "select",
-    options: pekerjaanOptions,
-  },
-  {
-    key: "penghasilan",
-    id: "darurat-penghasilan",
-    label: "Penghasilan Bulanan (Rp)",
-    Icon: Wallet,
-    type: "currency",
-    placeholder: "contoh: 12.000.000",
-  },
-  {
-    key: "pengeluaran",
-    id: "darurat-pengeluaran",
-    label: "Pengeluaran Bulanan Rata-rata (Rp)",
-    Icon: TrendingUp,
-    type: "currency",
-    placeholder: "contoh: 8.000.000",
-    hint: "Rata-rata pengeluaran per bulan, termasuk tagihan dan cicilan.",
-  },
-  {
-    key: "tabungan",
-    id: "darurat-tabungan",
-    label: "Tabungan Saat Ini (Rp)",
-    Icon: PiggyBank,
-    type: "currency",
-    placeholder: "contoh: 25.000.000",
-  },
-  {
-    key: "targetWaktu",
-    id: "darurat-target-waktu",
-    label: "Target Waktu Mencapai Dana Darurat (Bulan)",
+    key: "usiaPensiun",
+    id: "pensiun-usia-pensiun",
+    label: "Usia Pensiun",
     Icon: CalendarClock,
     type: "number",
-    placeholder: "contoh: 12",
-    hint: "Misalnya 12 bulan atau 1 tahun.",
-    max: MAX_TARGET_MONTHS,
+    placeholder: "contoh: 55",
+    hint: "Usia di mana kamu berencana pensiun.",
+    max: 80,
+  },
+  {
+    key: "pengeluaranBulanan",
+    id: "pensiun-pengeluaran",
+    label: "Pengeluaran Bulanan Saat Ini (Rp)",
+    Icon: TrendingUp,
+    type: "currency",
+    placeholder: "contoh: 10.000.000",
+    hint: "Rata-rata pengeluaranmu per bulan saat ini.",
+  },
+  {
+    key: "inflasi",
+    id: "pensiun-inflasi",
+    label: "Inflasi (%/tahun)",
+    Icon: TrendingUp,
+    type: "percent",
+    placeholder: "contoh: 5",
+    hint: "Rata-rata inflasi tahunan yang diantisipasi.",
+    max: 30,
+  },
+  {
+    key: "returnInvestasi",
+    id: "pensiun-return",
+    label: "Return Investasi (%/tahun)",
+    Icon: TrendingUp,
+    type: "percent",
+    placeholder: "contoh: 10",
+    hint: "Proyeksi return tahunan dari investasi.",
+    max: 50,
+  },
+  {
+    key: "danaSaatIni",
+    id: "pensiun-dana",
+    label: "Dana Saat Ini (tabungan existing) (Rp)",
+    Icon: PiggyBank,
+    type: "currency",
+    placeholder: "contoh: 50.000.000",
+    hint: "Total tabungan atau investasi yang sudah dimiliki.",
   },
 ];
 
 type ResultData = {
-  nama: string;
-  status: string;
-  tanggungan: number;
-  pekerjaan: string;
-  baseMultiplier: number;
-  riskMonths: number;
-  totalMultiplier: number;
-  pengeluaran: number;
-  target: number;
-  tabungan: number;
-  defisit: number;
-  bulananDibutuhkan: number;
-  targetWaktu: number;
-  tercapai: boolean;
+  tahunMenujuPensiun: number;
+  pengeluaranPensiun: number;
+  totalDanaPensiun: number;
+  pertumbuhanDanaSaatIni: number;
+  selisih: number;
+  tabunganBulanan: boolean;
+  usiaSaatIni: number;
+  usiaPensiun: number;
+  pengeluaranBulanan: number;
+  inflasi: number;
+  returnInvestasi: number;
+  danaSaatIni: number;
 };
 
 const inputClasses =
@@ -200,50 +147,50 @@ const smallResetButtonClasses =
   "inline-flex items-center gap-1.5 rounded-lg bg-transparent px-3 py-1.5 text-xs font-semibold text-neutral-500 ring-1 ring-neutral-200 transition-colors duration-300 hover:bg-neutral-50 active:scale-[0.98] dark:text-neutral-400 dark:ring-neutral-800 dark:hover:bg-neutral-800";
 
 function PrintLayout({ result }: { result: ResultData }) {
-  const recommendation = result.tercapai
-    ? `Tabungan saat ini sebesar ${formatIDR(result.tabungan)} sudah memenuhi target dana darurat sebesar ${formatIDR(result.target)}. Pertahankan kebiasaan menabung ini dan alokasikan kelebihan dana untuk tujuan finansial lainnya seperti investasi atau dana pensiun.`
-    : `Untuk mencapai target dana darurat sebesar ${formatIDR(result.target)}, Anda perlu menabung sebesar ${formatIDR(result.bulananDibutuhkan)} per bulan selama ${result.targetWaktu} bulan. Prioritaskan pengurangan pengeluaran yang tidak perlu dan tingkatkan pemasukan jika memungkinkan.`;
+  const bulananDibutuhkan =
+    result.selisih > 0 && result.tahunMenujuPensiun > 0
+      ? result.selisih / (result.tahunMenujuPensiun * 12)
+      : 0;
+
+  const recommendation =
+    result.selisih === 0
+      ? `Pertumbuhan dana kamu sudah cukup untuk memenuhi target dana pensiun ${formatIDR(result.totalDanaPensiun)}. Pertahankan kebiasaan menabung dan investasi ini untuk tujuan finansial lainnya.`
+      : `Untuk mencapai target dana pensiun sebesar ${formatIDR(result.totalDanaPensiun)}, Anda perlu menyisihkan sebesar ${formatIDR(bulananDibutuhkan)} per bulan selama ${result.tahunMenujuPensiun} tahun. Pertimbangkan untuk meningkatkan return investasi atau mengurangi pengeluaran agar target tercapai lebih cepat.`;
 
   return (
-    <div id="darurat-print-layout" className="hidden print:block">
+    <div id="pensiun-print-layout" className="hidden print:block">
       <div className="p-8 text-sm text-neutral-900">
         <h1 className="mb-6 text-2xl font-bold text-center">
-          Laporan Kalkulator Dana Darurat
+          Laporan Kalkulator Pensiun
         </h1>
-
-        {result.nama && (
-          <p className="mb-4 text-base">
-            <span className="font-semibold">Nama:</span> {result.nama}
-          </p>
-        )}
 
         <div className="mb-6">
           <h2 className="mb-2 text-lg font-bold border-b pb-1">Data Input</h2>
           <table className="w-full border-collapse">
             <tbody>
               <tr className="border-b">
-                <td className="py-2 font-medium w-1/2">Status</td>
-                <td className="py-2">{statusLabels[result.status]}</td>
+                <td className="py-2 font-medium w-1/2">Usia Sekarang</td>
+                <td className="py-2">{result.usiaSaatIni} tahun</td>
               </tr>
               <tr className="border-b">
-                <td className="py-2 font-medium">Tanggungan</td>
-                <td className="py-2">{result.tanggungan} orang</td>
+                <td className="py-2 font-medium">Usia Pensiun</td>
+                <td className="py-2">{result.usiaPensiun} tahun</td>
               </tr>
               <tr className="border-b">
-                <td className="py-2 font-medium">Pekerjaan</td>
-                <td className="py-2">{pekerjaanLabels[result.pekerjaan]}</td>
+                <td className="py-2 font-medium">Pengeluaran/Bulan</td>
+                <td className="py-2">{formatIDR(result.pengeluaranBulanan)}</td>
               </tr>
               <tr className="border-b">
-                <td className="py-2 font-medium">Pengeluaran Bulanan</td>
-                <td className="py-2">{formatIDR(result.pengeluaran)}</td>
+                <td className="py-2 font-medium">Inflasi</td>
+                <td className="py-2">{result.inflasi}%/tahun</td>
               </tr>
               <tr className="border-b">
-                <td className="py-2 font-medium">Tabungan Saat Ini</td>
-                <td className="py-2">{formatIDR(result.tabungan)}</td>
+                <td className="py-2 font-medium">Return Investasi</td>
+                <td className="py-2">{result.returnInvestasi}%/tahun</td>
               </tr>
               <tr className="border-b">
-                <td className="py-2 font-medium">Target Waktu</td>
-                <td className="py-2">{result.targetWaktu} bulan</td>
+                <td className="py-2 font-medium">Dana Saat Ini</td>
+                <td className="py-2">{formatIDR(result.danaSaatIni)}</td>
               </tr>
             </tbody>
           </table>
@@ -254,24 +201,28 @@ function PrintLayout({ result }: { result: ResultData }) {
           <table className="w-full border-collapse">
             <tbody>
               <tr className="border-b">
-                <td className="py-2 font-medium w-1/2">Total Pengali (Multiplier)</td>
-                <td className="py-2">{result.totalMultiplier}x pengeluaran bulanan</td>
+                <td className="py-2 font-medium w-1/2">Tahun hingga Pensiun</td>
+                <td className="py-2">{result.tahunMenujuPensiun} tahun</td>
               </tr>
               <tr className="border-b">
-                <td className="py-2 font-medium">Target Dana Darurat</td>
-                <td className="py-2 font-bold">{formatIDR(result.target)}</td>
+                <td className="py-2 font-medium">Pengeluaran saat Pensiun</td>
+                <td className="py-2">{formatIDR(result.pengeluaranPensiun)}/bulan</td>
               </tr>
               <tr className="border-b">
-                <td className="py-2 font-medium">Dana Terkumpul</td>
-                <td className="py-2">{formatIDR(result.tabungan)}</td>
+                <td className="py-2 font-medium">Total Dana Dibutuhkan</td>
+                <td className="py-2 font-bold">{formatIDR(result.totalDanaPensiun)}</td>
               </tr>
               <tr className="border-b">
-                <td className="py-2 font-medium">Kekurangan (Defisit)</td>
-                <td className="py-2">{formatIDR(result.defisit)}</td>
+                <td className="py-2 font-medium">Pertumbuhan Dana</td>
+                <td className="py-2">{formatIDR(result.pertumbuhanDanaSaatIni)}</td>
               </tr>
               <tr className="border-b">
-                <td className="py-2 font-medium">Tabungan/Bulan yang Dibutuhkan</td>
-                <td className="py-2 font-bold">{formatIDR(result.bulananDibutuhkan)}</td>
+                <td className="py-2 font-medium">Kekurangan</td>
+                <td className="py-2">{formatIDR(result.selisih)}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Tabungan/Bulan</td>
+                <td className="py-2 font-bold">{formatIDR(bulananDibutuhkan)}</td>
               </tr>
             </tbody>
           </table>
@@ -283,14 +234,14 @@ function PrintLayout({ result }: { result: ResultData }) {
         </div>
 
         <p className="mt-8 text-xs text-neutral-500 text-center">
-          Laporan ini dihasilkan oleh Kalkulator Dana Darurat
+          Laporan ini dihasilkan oleh Kalkulator Dana Pensiun
         </p>
       </div>
     </div>
   );
 }
 
-export default function DanaDaruratCalculator() {
+export default function PensiunCalculator() {
   const [form, setForm] = useState<FormState>(defaultForm);
   const [result, setResult] = useState<ResultData | null>(null);
 
@@ -311,37 +262,41 @@ export default function DanaDaruratCalculator() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    const status = form.status;
-    const pekerjaan = form.pekerjaan;
-    const tanggungan = Math.floor(toNumber(form.tanggungan, MAX_TANGGUNGAN));
-    const pengeluaran = toNumber(form.pengeluaran, MAX_CURRENCY);
-    const tabungan = toNumber(form.tabungan, MAX_CURRENCY);
-    const targetWaktu = Math.floor(toNumber(form.targetWaktu, MAX_TARGET_MONTHS));
+    const usiaSaatIni = Number(form.usiaSaatIni) || 0;
+    const usiaPensiun = Number(form.usiaPensiun) || 0;
+    const pengeluaranBulanan = Number(form.pengeluaranBulanan.replace(/\D/g, "")) || 0;
+    const inflasi = Number(form.inflasi) || 0;
+    const returnInvestasi = Number(form.returnInvestasi) || 0;
+    const danaSaatIni = Number(form.danaSaatIni.replace(/\D/g, "")) || 0;
 
-    const baseMultiplier = status === "lajang" ? 6 : tanggungan > 0 ? 12 : 9;
-    const riskMonths =
-      pekerjaan === "tetap" ? 0 : pekerjaan === "kontrak" ? 3 : 6;
-    const totalMultiplier = baseMultiplier + riskMonths;
-    const target = pengeluaran * totalMultiplier;
-    const defisit = Math.max(0, target - tabungan);
-    const bulananDibutuhkan =
-      defisit > 0 && targetWaktu > 0 ? defisit / targetWaktu : 0;
+    const tahunMenujuPensiun = Math.max(0, usiaPensiun - usiaSaatIni);
+
+    const factorInflasi = Math.pow(1 + inflasi / 100, tahunMenujuPensiun);
+    const pengeluaranPensiun = pengeluaranBulanan * factorInflasi;
+
+    const factorReturn = Math.pow(1 + returnInvestasi / 100, tahunMenujuPensiun);
+    const totalDanaPensiun = pengeluaranPensiun * 12 * 25;
+
+    const pertumbuhanDanaSaatIni = danaSaatIni * factorReturn;
+
+    const selisih = Math.max(0, totalDanaPensiun - pertumbuhanDanaSaatIni);
+
+    const bulananDibutuhkan = selisih / (tahunMenujuPensiun * 12);
+    const tabunganBulanan = bulananDibutuhkan > 0;
 
     setResult({
-      nama: form.nama.trim(),
-      status,
-      tanggungan,
-      pekerjaan,
-      baseMultiplier,
-      riskMonths,
-      totalMultiplier,
-      pengeluaran,
-      target,
-      tabungan,
-      defisit,
-      bulananDibutuhkan,
-      targetWaktu,
-      tercapai: tabungan >= target && pengeluaran > 0,
+      tahunMenujuPensiun,
+      pengeluaranPensiun,
+      totalDanaPensiun,
+      pertumbuhanDanaSaatIni,
+      selisih,
+      tabunganBulanan,
+      usiaSaatIni,
+      usiaPensiun,
+      pengeluaranBulanan,
+      inflasi,
+      returnInvestasi,
+      danaSaatIni,
     });
   };
 
@@ -350,15 +305,16 @@ export default function DanaDaruratCalculator() {
       <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-brand-100 px-4 py-1.5 text-sm font-semibold text-brand-600 dark:bg-brand-900/20 dark:text-brand-400">
-            <ShieldCheck className="h-4 w-4" />
-            Kalkulator Dana Darurat
+            <PiggyBank className="h-4 w-4" />
+            Kalkulator Dana Pensiun
           </span>
           <h1 className="mt-4 text-3xl font-bold text-ink dark:text-neutral-50 md:text-5xl">
-            Rencanakan Jaring Pengaman Finansialmu
+            Rencanakan Masa Pensiunmu dengan Tenang
           </h1>
           <p className="mt-4 leading-relaxed text-neutral-500 dark:text-neutral-400">
-            Hitung target dana darurat yang ideal berdasarkan status, jumlah
-            tanggungan, dan tingkat risiko pekerjaanmu.
+            Hitung berapa besar dana pensiun yang kamu butuhkan, termasuk
+            pengaruh inflasi, pertumbuhan investasi, dan tabungan yang sudah
+            dimiliki.
           </p>
         </div>
 
@@ -385,48 +341,29 @@ export default function DanaDaruratCalculator() {
                     </label>
                     <div className="relative mt-2">
                       <field.Icon className="pointer-events-none absolute left-3.5 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
-                      {field.type === "select" ? (
-                        <select
-                          id={field.id}
-                          value={form[field.key]}
-                          onChange={(e) => setField(field.key, e.target.value)}
-                          className={inputClasses}
-                        >
-                          {field.options?.map((option) => (
-                            <option key={option.value} value={option.value} className="bg-white text-ink dark:bg-neutral-900 dark:text-neutral-100">
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <input
-                          id={field.id}
-                          type="text"
-                          inputMode={
-                            field.type === "text" ? undefined : "numeric"
-                          }
-                          placeholder={field.placeholder}
-                          value={
+                      <input
+                        id={field.id}
+                        type="text"
+                        inputMode="numeric"
+                        placeholder={field.placeholder}
+                        value={
+                          field.type === "currency"
+                            ? maskRupiah(form[field.key])
+                            : form[field.key]
+                        }
+                        onChange={(e) =>
+                          setField(
+                            field.key,
                             field.type === "currency"
-                              ? maskRupiah(form[field.key])
-                              : form[field.key]
-                          }
-                          onChange={(e) =>
-                            setField(
-                              field.key,
-                              field.type === "text"
-                                ? e.target.value
-                                : field.type === "number"
-                                  ? clampDigits(
-                                      e.target.value,
-                                      field.max ?? Number.MAX_SAFE_INTEGER,
-                                    )
-                                  : e.target.value.replace(/\D/g, "").slice(0, 11),
-                            )
-                          }
-                          className={inputClasses}
-                        />
-                      )}
+                              ? e.target.value.replace(/\D/g, "").slice(0, 11)
+                              : clampDigits(
+                                  e.target.value,
+                                  field.max ?? Number.MAX_SAFE_INTEGER,
+                                ),
+                          )
+                        }
+                        className={inputClasses}
+                      />
                     </div>
                     {field.hint ? (
                       <p className="mt-2 text-xs text-neutral-400 dark:text-neutral-500">{field.hint}</p>
@@ -452,7 +389,7 @@ export default function DanaDaruratCalculator() {
           </div>
 
           <div
-            id="darurat-result"
+            id="pensiun-result"
             className="rounded-3xl bg-ink p-6 text-white shadow-lg dark:bg-neutral-900 sm:p-8 lg:sticky lg:top-24"
             aria-live="polite"
           >
@@ -465,54 +402,59 @@ export default function DanaDaruratCalculator() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
                 >
-                  {result.nama ? (
-                    <div className="flex items-center gap-2 text-sm font-medium text-white/70">
-                      <User className="h-4 w-4" />
-                      Rencana dana darurat untuk {result.nama}
-                    </div>
-                  ) : null}
-
-                  <div className="mt-4 flex items-center gap-2 text-white/60">
-                    <ShieldCheck className="h-4 w-4" />
+                  <div className="flex items-center gap-2 text-white/60">
+                    <CalendarClock className="h-4 w-4" />
                     <span className="text-xs font-medium uppercase tracking-wider">
-                      Total Pengali (Multiplier)
+                      Tahun Menuju Pensiun
                     </span>
                   </div>
                   <div className="mt-2 text-3xl font-bold">
-                    {result.totalMultiplier}x{" "}
+                    {result.tahunMenujuPensiun}{" "}
                     <span className="text-base font-medium text-white/60">
-                      Pengeluaran Bulanan
+                      Tahun
                     </span>
                   </div>
-                  <p className="mt-1 text-xs leading-relaxed text-white/50">
-                    Berdasarkan status {statusLabels[result.status]}
-                    {result.tanggungan > 0
-                      ? ` dengan ${result.tanggungan} tanggungan`
-                      : ""}{" "}
-                    dan pekerjaan {pekerjaanLabels[result.pekerjaan]}.
-                  </p>
 
                   <div className="mt-6 flex items-center gap-2 text-white/60">
                     <Target className="h-4 w-4" />
                     <span className="text-xs font-medium uppercase tracking-wider">
-                      Target Dana Darurat
+                      Total Dana Pensiun Dibutuhkan
                     </span>
                   </div>
                   <div className="mt-2 w-full text-4xl font-bold sm:text-5xl">
-                    <AnimatedValue value={result.target} />
+                    <AnimatedValue value={result.totalDanaPensiun} />
+                  </div>
+                  <p className="mt-1 text-xs leading-relaxed text-white/50">
+                    Berdasarkan 25x pengeluaran tahunan saat pensiun (rumus
+                    4% withdrawal rule).
+                  </p>
+
+                  <div className="mt-6 grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+                      <p className="text-xs text-white/60">Pengeluaran Saat Pensiun/bulan</p>
+                      <strong className="mt-1 block min-w-0 text-base font-bold break-all">
+                        <AnimatedValue value={result.pengeluaranPensiun} />
+                      </strong>
+                    </div>
+                    <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+                      <p className="text-xs text-white/60">Dana Saat Ini → Saat Pensiun</p>
+                      <strong className="mt-1 block min-w-0 text-base font-bold break-all">
+                        <AnimatedValue value={result.pertumbuhanDanaSaatIni} />
+                      </strong>
+                    </div>
                   </div>
 
                   <div className="mt-6 grid grid-cols-2 gap-3">
                     <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                       <p className="text-xs text-white/60">Dana Terkumpul Saat Ini</p>
                       <strong className="mt-1 block min-w-0 text-base font-bold break-all">
-                        <AnimatedValue value={result.tabungan} />
+                        <AnimatedValue value={Number(form.danaSaatIni.replace(/\D/g, "")) || 0} />
                       </strong>
                     </div>
                     <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
                       <p className="text-xs text-white/60">Kekurangan (Defisit)</p>
                       <strong className="mt-1 block min-w-0 text-base font-bold break-all">
-                        <AnimatedValue value={result.defisit} />
+                        <AnimatedValue value={result.selisih} />
                       </strong>
                     </div>
                   </div>
@@ -525,25 +467,33 @@ export default function DanaDaruratCalculator() {
                       </span>
                     </div>
                     <div className="mt-2 w-full text-4xl font-bold text-brand-700 dark:text-brand-400 sm:text-5xl">
-                      <AnimatedValue value={result.bulananDibutuhkan} />
+                      <AnimatedValue
+                        value={
+                          result.selisih > 0 && result.tahunMenujuPensiun > 0
+                            ? result.selisih / (result.tahunMenujuPensiun * 12)
+                            : 0
+                        }
+                      />
                     </div>
                     <p className="mt-3 text-xs leading-relaxed text-neutral-400 dark:text-neutral-500">
-                      Jika ditabung secara rutin setiap bulan selama{" "}
-                      {result.targetWaktu > 0 ? (
-                        <strong className="font-semibold text-neutral-600 dark:text-neutral-300">
-                          {result.targetWaktu} bulan
-                        </strong>
+                      {result.selisih > 0 && result.tahunMenujuPensiun > 0 ? (
+                        <>
+                          Jika disisihkan secara rutin setiap bulan selama{" "}
+                          <strong className="font-semibold text-neutral-600 dark:text-neutral-300">
+                            {result.tahunMenujuPensiun} tahun
+                          </strong>
+                          .
+                        </>
                       ) : (
-                        <strong className="font-semibold text-neutral-600 dark:text-neutral-300">
-                          periode yang kamu tentukan
-                        </strong>
+                        <>
+                          Tabunganmu sudah cukup untuk mencapai target dana pensiun.
+                        </>
                       )}
-                      .
                     </p>
                   </div>
 
                   <div className="mt-6">
-                    {result.tercapai ? (
+                    {!result.tabunganBulanan && result.selisih === 0 ? (
                       <motion.div
                         initial={{ opacity: 0, scale: 0.96 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -552,12 +502,11 @@ export default function DanaDaruratCalculator() {
                         <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
                         <div>
                           <p className="font-semibold text-emerald-300">
-                            Selamat! Target tercapai 🎉
+                            Selamat! Target tercapai
                           </p>
                           <p className="mt-1 text-sm leading-relaxed text-white/70">
-                            Tabunganmu sudah memenuhi target dana darurat
-                            {formatIDR(result.target)}. Pertahankan kebiasaan ini
-                            untuk tujuan finansial lainnya.
+                            Pertumbuhan dana kamu sudah cukup untuk memenuhi target
+                            dana pensiun {formatIDR(result.totalDanaPensiun)}.
                           </p>
                         </div>
                       </motion.div>
@@ -570,13 +519,15 @@ export default function DanaDaruratCalculator() {
                         <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-rose-400" />
                         <div>
                           <p className="font-semibold text-rose-300">
-                            Masih kurang {formatIDR(result.defisit)}
+                            Masih kurang {formatIDR(result.selisih)}
                           </p>
                           <p className="mt-1 text-sm leading-relaxed text-white/70">
-                            Untuk mencapai target {formatIDR(result.target)}. Mulai
+                            Untuk mencapai target {formatIDR(result.totalDanaPensiun)}. Mulai
                             sisihkan{" "}
-                            {result.targetWaktu > 0
-                              ? formatIDR(result.bulananDibutuhkan)
+                            {result.tahunMenujuPensiun > 0
+                              ? formatIDR(
+                                  result.selisih / (result.tahunMenujuPensiun * 12),
+                                )
                               : "sebagian"}{" "}
                             setiap bulan agar tercapai tepat waktu.
                           </p>
@@ -587,8 +538,8 @@ export default function DanaDaruratCalculator() {
 
                   <div className="mt-6 flex justify-center">
                     <PrintButton
-                      elementId="darurat-print-layout"
-                      filename="laporan-dana-darurat"
+                      elementId="pensiun-print-layout"
+                      filename="laporan-kalkulator-pensiun"
                       disabled={!result}
                     />
                   </div>
@@ -610,7 +561,7 @@ export default function DanaDaruratCalculator() {
                     <strong className="font-medium text-white/70">
                       Lihat Hasil
                     </strong>{" "}
-                    untuk melihat target dana darurat yang ideal untukmu.
+                    untuk melihat target dana pensiun yang ideal untukmu.
                   </p>
                 </motion.div>
               )}

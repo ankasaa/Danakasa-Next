@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 function renderInline(text: string, prefix: string): ReactNode[] {
   const nodes: ReactNode[] = [];
-  const pattern = /(\*\*[^*]+\*\*|\*[^*]+\*)/g;
+  const pattern = /(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
   let index = 0;
@@ -20,12 +20,36 @@ function renderInline(text: string, prefix: string): ReactNode[] {
           {token.slice(2, -2)}
         </strong>,
       );
-    } else {
+    } else if (token.startsWith("*")) {
       nodes.push(
         <em key={`${prefix}-em-${index}`} className="italic">
           {token.slice(1, -1)}
         </em>,
       );
+    } else if (token.startsWith("`")) {
+      nodes.push(
+        <code
+          key={`${prefix}-code-${index}`}
+          className="rounded bg-neutral-100 px-1.5 py-0.5 text-sm font-mono text-brand-600 dark:bg-neutral-800 dark:text-brand-400"
+        >
+          {token.slice(1, -1)}
+        </code>,
+      );
+    } else if (token.startsWith("[")) {
+      const linkMatch = /\[([^\]]+)\]\(([^)]+)\)/.exec(token);
+      if (linkMatch) {
+        nodes.push(
+          <a
+            key={`${prefix}-link-${index}`}
+            href={linkMatch[2]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand-600 underline decoration-brand-300 underline-offset-2 transition-colors hover:text-brand-700 dark:text-brand-400 dark:decoration-brand-700"
+          >
+            {linkMatch[1]}
+          </a>,
+        );
+      }
     }
     index += 1;
     lastIndex = match.index + token.length;
@@ -75,6 +99,53 @@ export function Markdown({ content }: { content: string }) {
         <Tag key={key} className={HEADING_CLASSES[level]}>
           {renderInline(heading[2], `heading-${key}`)}
         </Tag>,
+      );
+      key += 1;
+      continue;
+    }
+
+    if (trimmed.startsWith("> ")) {
+      const quoteLines = [trimmed.slice(2)];
+      while (i < lines.length) {
+        const next = lines[i].trim();
+        if (next === "" || !next.startsWith("> ")) break;
+        quoteLines.push(next.slice(2));
+        i += 1;
+      }
+      blocks.push(
+        <blockquote
+          key={key}
+          className="my-6 border-l-4 border-brand-300 bg-brand-50/50 py-4 pl-6 pr-4 text-ink italic dark:border-brand-700 dark:bg-brand-900/10 dark:text-neutral-200"
+        >
+          {quoteLines.map((line, qi) => (
+            <p key={qi} className={qi > 0 ? "mt-2" : ""}>
+              {renderInline(line, `quote-${key}-${qi}`)}
+            </p>
+          ))}
+        </blockquote>,
+      );
+      key += 1;
+      continue;
+    }
+
+    if (trimmed.startsWith("```")) {
+      const codeLines: string[] = [];
+      while (i < lines.length) {
+        const codeLine = lines[i];
+        if (codeLine.trim().startsWith("```")) {
+          i += 1;
+          break;
+        }
+        codeLines.push(codeLine);
+        i += 1;
+      }
+      blocks.push(
+        <pre
+          key={key}
+          className="my-6 overflow-x-auto rounded-xl bg-neutral-900 p-6 text-sm text-neutral-100 dark:bg-neutral-950"
+        >
+          <code>{codeLines.join("\n")}</code>
+        </pre>,
       );
       key += 1;
       continue;
@@ -136,7 +207,9 @@ export function Markdown({ content }: { content: string }) {
       if (
         next === "" ||
         /^(#{1,6})\s/.test(next) ||
-        /^([-*]|\d+\.)\s/.test(next)
+        /^([-*]|\d+\.)\s/.test(next) ||
+        next.startsWith("> ") ||
+        next.startsWith("```")
       ) {
         break;
       }

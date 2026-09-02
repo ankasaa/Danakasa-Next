@@ -15,43 +15,15 @@ import {
   Wallet,
   type LucideIcon,
 } from "lucide-react";
-
-function formatIDR(value: number): string {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
-}
+import {
+  AnimatedValue,
+  formatIDR,
+  maskRupiah,
+  toNumber,
+} from "@/lib/calculator-utils";
+import PrintButton from "@/components/calculators/PrintButton";
 
 const MAX_CURRENCY = 99_999_999_999;
-
-function toNumber(value: string, max = Number.POSITIVE_INFINITY): number {
-  const parsed = Number.parseFloat(value);
-  if (!Number.isFinite(parsed) || parsed <= 0) return 0;
-  return Math.min(parsed, max);
-}
-
-function maskRupiah(digits: string): string {
-  const cleaned = digits.replace(/\D/g, "").slice(0, 11);
-  if (!cleaned) return "";
-  return "Rp " + Number.parseInt(cleaned, 10).toLocaleString("id-ID");
-}
-
-function AnimatedValue({ value }: { value: number }) {
-  return (
-    <motion.span
-      key={value}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
-      className="inline-block max-w-full tabular-nums break-all"
-    >
-      {formatIDR(value)}
-    </motion.span>
-  );
-}
 
 type FormState = {
   penghasilan: string;
@@ -200,6 +172,92 @@ function buildBar(
   return { key, label, ideal, actual, Icon, status, statusLabel, gradient };
 }
 
+function PrintAnggaranLayout({ result }: { result: ResultData }) {
+  const recommendation =
+    result.balance < 0
+      ? `Pengeluaran melebihi pendapatan sebesar ${formatIDR(Math.abs(result.balance))}. Kurangi pengeluaran atau tambah penghasilan agar anggaran kembali seimbang.`
+      : result.balance === 0
+        ? "Anggaranmu sudah tepat sasaran. Tidak ada sisa atau defisit."
+        : `Sisa anggaran sebesar ${formatIDR(result.balance)} dapat dialokasikan untuk tabungan darurat atau investasi tambahan.`;
+
+  return (
+    <div id="anggaran-print-layout" className="hidden print:block">
+      <div className="p-8 text-sm text-neutral-900">
+        <h1 className="mb-6 text-2xl font-bold text-center">
+          Laporan Kalkulator Perencanaan Anggaran
+        </h1>
+
+        <div className="mb-6">
+          <h2 className="mb-2 text-lg font-bold border-b pb-1">Data Input</h2>
+          <table className="w-full border-collapse">
+            <tbody>
+              <tr className="border-b">
+                <td className="py-2 font-medium w-1/2">Penghasilan Bulanan</td>
+                <td className="py-2">{formatIDR(result.penghasilan)}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Kebutuhan Dasar</td>
+                <td className="py-2">{formatIDR(result.kebutuhan)}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Keinginan</td>
+                <td className="py-2">{formatIDR(result.keinginan)}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Tabungan & Investasi</td>
+                <td className="py-2">{formatIDR(result.tabungan)}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Pengeluaran Lainnya</td>
+                <td className="py-2">{formatIDR(result.lainnya)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mb-6">
+          <h2 className="mb-2 text-lg font-bold border-b pb-1">
+            Hasil Perhitungan
+          </h2>
+          <table className="w-full border-collapse">
+            <tbody>
+              <tr className="border-b">
+                <td className="py-2 font-medium w-1/2">Total Pengeluaran</td>
+                <td className="py-2">{formatIDR(result.totalPengeluaran)}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Sisa / Defisit</td>
+                <td className="py-2 font-bold">
+                  {result.balance >= 0
+                    ? formatIDR(result.balance)
+                    : `-${formatIDR(Math.abs(result.balance))}`}
+                </td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Status 50/30/20</td>
+                <td className="py-2">
+                  Kebutuhan {Math.round(result.pctKebutuhan)}% / Keinginan{" "}
+                  {Math.round(result.pctKeinginan)}% / Tabungan{" "}
+                  {Math.round(result.pctTabungan)}%
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mb-6">
+          <h2 className="mb-2 text-lg font-bold border-b pb-1">Rekomendasi</h2>
+          <p className="leading-relaxed">{recommendation}</p>
+        </div>
+
+        <p className="mt-8 text-xs text-neutral-500 text-center">
+          Laporan ini dihasilkan oleh Kalkulator Perencanaan Anggaran
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function PerencanaanAnggaranCalculator() {
   const [form, setForm] = useState<FormState>(defaultForm);
   const [result, setResult] = useState<ResultData | null>(null);
@@ -260,228 +318,244 @@ export default function PerencanaanAnggaranCalculator() {
       : { text: "text-emerald-300", ring: "ring-emerald-400/30", bg: "bg-emerald-500/15" };
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
-      <div className="mx-auto max-w-2xl text-center">
-        <span className="inline-flex items-center gap-2 rounded-full bg-brand-100 px-4 py-1.5 text-sm font-semibold text-brand-600 dark:bg-brand-900/20 dark:text-brand-400">
-          <Calculator className="h-4 w-4" />
-          Kalkulator Perencanaan Anggaran
-        </span>
-        <h1 className="mt-4 text-3xl font-bold text-ink dark:text-neutral-50 md:text-5xl">
-          Evaluasi Anggaran Bulananmu
-        </h1>
-        <p className="mt-4 leading-relaxed text-neutral-500 dark:text-neutral-400">
-          Bandingkan pengeluaran aktualmu dengan metode ideal 50/30/20 dan
-          lihat apakah anggaran bulananmu sehat atau sudah melampaui batas.
-        </p>
-      </div>
+    <>
+      <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full bg-brand-100 px-4 py-1.5 text-sm font-semibold text-brand-600 dark:bg-brand-900/20 dark:text-brand-400">
+            <Calculator className="h-4 w-4" />
+            Kalkulator Perencanaan Anggaran
+          </span>
+          <h1 className="mt-4 text-3xl font-bold text-ink dark:text-neutral-50 md:text-5xl">
+            Evaluasi Anggaran Bulananmu
+          </h1>
+          <p className="mt-4 leading-relaxed text-neutral-500 dark:text-neutral-400">
+            Bandingkan pengeluaran aktualmu dengan metode ideal 50/30/20 dan
+            lihat apakah anggaran bulananmu sehat atau sudah melampaui batas.
+          </p>
+        </div>
 
-      <div className="mt-12 grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
-        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-neutral-100 dark:bg-neutral-900 dark:ring-neutral-800 sm:p-8">
-          <div className="flex items-center justify-between gap-4">
-            <h2 className="text-lg font-semibold text-ink dark:text-neutral-50">Data Anggaran Bulanan</h2>
-            <button
-              type="button"
-              onClick={handleReset}
-              className={smallResetButtonClasses}
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-              Reset
-            </button>
-          </div>
-
-          <form noValidate onSubmit={handleSubmit} className="mt-6">
-            <div className="grid gap-5 sm:grid-cols-2">
-              {fields.map((field) => (
-                <div key={field.key} className={field.fullWidth ? "sm:col-span-2" : ""}>
-                  <label htmlFor={field.id} className="text-sm font-medium text-ink dark:text-neutral-50">
-                    {field.label} (Rp)
-                  </label>
-                  <div className="relative mt-2">
-                    <field.Icon className="pointer-events-none absolute left-3.5 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
-                    <input
-                      id={field.id}
-                      type="text"
-                      inputMode="numeric"
-                      placeholder={field.placeholder}
-                      value={maskRupiah(form[field.key])}
-                      onChange={(e) =>
-                        setField(
-                          field.key,
-                          e.target.value.replace(/\D/g, "").slice(0, 11),
-                        )
-                      }
-                      className={inputClasses}
-                    />
-                  </div>
-                  {field.hint ? (
-                    <p className="mt-2 text-xs text-neutral-400 dark:text-neutral-500">{field.hint}</p>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <button type="submit" className={primaryButtonClasses}>
-                Lihat Hasil
-              </button>
+        <div className="mt-12 grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
+          <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-neutral-100 dark:bg-neutral-900 dark:ring-neutral-800 sm:p-8">
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-lg font-semibold text-ink dark:text-neutral-50">Data Anggaran Bulanan</h2>
               <button
                 type="button"
-                onClick={handleExample}
-                className={secondaryButtonClasses}
+                onClick={handleReset}
+                className={smallResetButtonClasses}
               >
-                <Sparkles className="h-4 w-4" />
-                Contoh Data
+                <RotateCcw className="h-3.5 w-3.5" />
+                Reset
               </button>
             </div>
-          </form>
-        </div>
 
-        <div className="rounded-3xl bg-ink p-6 text-white shadow-lg dark:bg-neutral-900 sm:p-8 lg:sticky lg:top-24" aria-live="polite">
-          <AnimatePresence mode="wait">
-            {result ? (
-              <motion.div
-                key="result"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-              >
-                <div className="flex items-center gap-2 text-white/60">
-                  <Target className="h-4 w-4" />
-                  <span className="text-xs font-medium uppercase tracking-wider">
-                    Ringkasan Anggaran Bulanan
-                  </span>
-                </div>
-
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <p className="text-xs text-white/60">Total Penghasilan</p>
-                    <strong className="mt-1 block min-w-0 text-lg font-bold break-all">
-                      <AnimatedValue value={result.penghasilan} />
-                    </strong>
+            <form noValidate onSubmit={handleSubmit} className="mt-6">
+              <div className="grid gap-5 sm:grid-cols-2">
+                {fields.map((field) => (
+                  <div key={field.key} className={field.fullWidth ? "sm:col-span-2" : ""}>
+                    <label htmlFor={field.id} className="text-sm font-medium text-ink dark:text-neutral-50">
+                      {field.label} (Rp)
+                    </label>
+                    <div className="relative mt-2">
+                      <field.Icon className="pointer-events-none absolute left-3.5 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
+                      <input
+                        id={field.id}
+                        type="text"
+                        inputMode="numeric"
+                        placeholder={field.placeholder}
+                        value={maskRupiah(form[field.key])}
+                        onChange={(e) =>
+                          setField(
+                            field.key,
+                            e.target.value.replace(/\D/g, "").slice(0, 11),
+                          )
+                        }
+                        className={inputClasses}
+                      />
+                    </div>
+                    {field.hint ? (
+                      <p className="mt-2 text-xs text-neutral-400 dark:text-neutral-500">{field.hint}</p>
+                    ) : null}
                   </div>
-                  <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-                    <p className="text-xs text-white/60">Total Pengeluaran</p>
-                    <strong className="mt-1 block min-w-0 text-lg font-bold break-all">
-                      <AnimatedValue value={result.totalPengeluaran} />
-                    </strong>
-                  </div>
-                </div>
+                ))}
+              </div>
 
-                <div
-                  className={`mt-4 flex items-start gap-3 rounded-2xl p-4 ring-1 ${statusColor.bg} ${statusColor.ring}`}
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                <button type="submit" className={primaryButtonClasses}>
+                  Lihat Hasil
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExample}
+                  className={secondaryButtonClasses}
                 >
-                  {result.balance < 0 ? (
-                    <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-rose-400" />
-                  ) : (
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
-                  )}
-                  <div>
-                    <p className={`font-semibold ${statusColor.text}`}>
-                      {result.balance < 0 ? (
-                        <>
-                          Pengeluaran melebihi pendapatan!{" "}
-                          <AnimatedValue value={Math.abs(result.balance)} /> di
-                          atas anggaran
-                        </>
-                      ) : (
-                        <>
-                          Sisa uang bulan ini{" "}
-                          {result.balance === 0 ? (
-                            "Rp 0"
-                          ) : (
-                            <AnimatedValue value={result.balance} />
-                          )}
-                        </>
-                      )}
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-white/70">
-                      {result.balance < 0
-                        ? "Kurangi pengeluaran atau tambah penghasilan agar anggaran kembali seimbang."
-                        : "Anggaranmu seimbang. Pertahankan kebiasaan menabung ini."}
-                    </p>
+                  <Sparkles className="h-4 w-4" />
+                  Contoh Data
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div
+            id="anggaran-result"
+            className="rounded-3xl bg-ink p-6 text-white shadow-lg dark:bg-neutral-900 sm:p-8 lg:sticky lg:top-24"
+            aria-live="polite"
+          >
+            <AnimatePresence mode="wait">
+              {result ? (
+                <motion.div
+                  key="result"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                >
+                  <div className="flex items-center gap-2 text-white/60">
+                    <Target className="h-4 w-4" />
+                    <span className="text-xs font-medium uppercase tracking-wider">
+                      Ringkasan Anggaran Bulanan
+                    </span>
                   </div>
-                </div>
 
-                <div className="mt-6 space-y-4">
-                  {bars.map((bar, index) => (
-                    <motion.div
-                      key={bar.key}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.35, delay: index * 0.08, ease: "easeOut" }}
-                      className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex min-w-0 items-center gap-3">
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white">
-                            <bar.Icon className="h-5 w-5" />
-                          </span>
-                          <div className="min-w-0">
-                            <p className="text-sm font-semibold">{bar.label}</p>
-                            <p className="text-xs text-white/50">
-                              {bar.statusLabel}
-                            </p>
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+                      <p className="text-xs text-white/60">Total Penghasilan</p>
+                      <strong className="mt-1 block min-w-0 text-lg font-bold break-all">
+                        <AnimatedValue value={result.penghasilan} />
+                      </strong>
+                    </div>
+                    <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+                      <p className="text-xs text-white/60">Total Pengeluaran</p>
+                      <strong className="mt-1 block min-w-0 text-lg font-bold break-all">
+                        <AnimatedValue value={result.totalPengeluaran} />
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div
+                    className={`mt-4 flex items-start gap-3 rounded-2xl p-4 ring-1 ${statusColor.bg} ${statusColor.ring}`}
+                  >
+                    {result.balance < 0 ? (
+                      <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-rose-400" />
+                    ) : (
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
+                    )}
+                    <div>
+                      <p className={`font-semibold ${statusColor.text}`}>
+                        {result.balance < 0 ? (
+                          <>
+                            Pengeluaran melebihi pendapatan!{" "}
+                            <AnimatedValue value={Math.abs(result.balance)} /> di
+                            atas anggaran
+                          </>
+                        ) : (
+                          <>
+                            Sisa uang bulan ini{" "}
+                            {result.balance === 0 ? (
+                              "Rp 0"
+                            ) : (
+                              <AnimatedValue value={result.balance} />
+                            )}
+                          </>
+                        )}
+                      </p>
+                      <p className="mt-1 text-sm leading-relaxed text-white/70">
+                        {result.balance < 0
+                          ? "Kurangi pengeluaran atau tambah penghasilan agar anggaran kembali seimbang."
+                          : "Anggaranmu seimbang. Pertahankan kebiasaan menabung ini."}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 space-y-4">
+                    {bars.map((bar, index) => (
+                      <motion.div
+                        key={bar.key}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: index * 0.08, ease: "easeOut" }}
+                        className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex min-w-0 items-center gap-3">
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white">
+                              <bar.Icon className="h-5 w-5" />
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold">{bar.label}</p>
+                              <p className="text-xs text-white/50">
+                                {bar.statusLabel}
+                              </p>
+                            </div>
                           </div>
+                          <span
+                            className={`shrink-0 text-sm font-bold tabular-nums ${
+                              bar.status === "good"
+                                ? "text-emerald-300"
+                                : bar.status === "warn"
+                                  ? "text-amber-300"
+                                  : "text-rose-300"
+                            }`}
+                          >
+                            {Math.round(bar.actual)}%
+                          </span>
                         </div>
-                        <span
-                          className={`shrink-0 text-sm font-bold tabular-nums ${
-                            bar.status === "good"
-                              ? "text-emerald-300"
-                              : bar.status === "warn"
-                                ? "text-amber-300"
-                                : "text-rose-300"
-                          }`}
-                        >
-                          {Math.round(bar.actual)}%
-                        </span>
-                      </div>
-                      <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-white/15">
-                        <motion.div
-                          className={`h-full rounded-full bg-gradient-to-r ${bar.gradient}`}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${Math.min(100, bar.actual)}%` }}
-                          transition={{ duration: 0.6, ease: "easeOut" }}
-                        />
-                      </div>
-                      <div className="mt-2 flex justify-between text-[10px] uppercase tracking-wider text-white/40">
-                        <span>Aktual</span>
-                        <span>Ideal {bar.ideal}%</span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+                        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-white/15">
+                          <motion.div
+                            className={`h-full rounded-full bg-gradient-to-r ${bar.gradient}`}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${Math.min(100, bar.actual)}%` }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                          />
+                        </div>
+                        <div className="mt-2 flex justify-between text-[10px] uppercase tracking-wider text-white/40">
+                          <span>Aktual</span>
+                          <span>Ideal {bar.ideal}%</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
 
-                <p className="mt-6 text-xs leading-relaxed text-white/40">
-                  Perbandingan dilakukan terhadap metode ideal 50/30/20.
-                  Proyeksi ini bersifat estimasi dan dapat disesuaikan dengan
-                  kondisi keuanganmu.
-                </p>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="idle"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center py-10 text-center"
-              >
-                <Calculator className="h-12 w-12 text-white/25" />
-                <p className="mt-4 font-semibold text-white/80">
-                  Ringkasan Hasil
-                </p>
-                <p className="mt-2 max-w-xs text-sm leading-relaxed text-white/50">
-                  Isi data anggaran bulanan Anda, lalu tekan{" "}
-                  <strong className="font-medium text-white/70">
-                    Lihat Ringkasan
-                  </strong>{" "}
-                  untuk mengevaluasi pengeluaranmu terhadap metode 50/30/20.
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  <p className="mt-6 text-xs leading-relaxed text-white/40">
+                    Perbandingan dilakukan terhadap metode ideal 50/30/20.
+                    Proyeksi ini bersifat estimasi dan dapat disesuaikan dengan
+                    kondisi keuanganmu.
+                  </p>
+
+                  <div className="mt-6 flex justify-center">
+                    <PrintButton
+                      elementId="anggaran-print-layout"
+                      filename="laporan-perencanaan-anggaran"
+                      disabled={!result}
+                    />
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="idle"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center py-10 text-center"
+                >
+                  <Calculator className="h-12 w-12 text-white/25" />
+                  <p className="mt-4 font-semibold text-white/80">
+                    Ringkasan Hasil
+                  </p>
+                  <p className="mt-2 max-w-xs text-sm leading-relaxed text-white/50">
+                    Isi data anggaran bulanan Anda, lalu tekan{" "}
+                    <strong className="font-medium text-white/70">
+                      Lihat Ringkasan
+                    </strong>{" "}
+                    untuk mengevaluasi pengeluaranmu terhadap metode 50/30/20.
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {result && <PrintAnggaranLayout result={result} />}
+    </>
   );
 }

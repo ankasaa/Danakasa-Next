@@ -16,53 +16,18 @@ import {
   Wallet,
   type LucideIcon,
 } from "lucide-react";
-
-function formatIDR(value: number): string {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
-}
+import {
+  AnimatedValue,
+  clampDigits,
+  formatIDR,
+  maskRupiah,
+  toNumber,
+} from "@/lib/calculator-utils";
+import PrintButton from "@/components/calculators/PrintButton";
 
 const MAX_YEARS = 50;
 const MAX_CURRENCY = 99_999_999_999;
 const MAX_PERCENT = 100;
-
-function toNumber(value: string, max = Number.POSITIVE_INFINITY): number {
-  const parsed = Number.parseFloat(value);
-  if (!Number.isFinite(parsed) || parsed <= 0) return 0;
-  return Math.min(parsed, max);
-}
-
-function maskRupiah(digits: string): string {
-  const cleaned = digits.replace(/\D/g, "").slice(0, 11);
-  if (!cleaned) return "";
-  return "Rp " + Number.parseInt(cleaned, 10).toLocaleString("id-ID");
-}
-
-function clampDigits(value: string, max: number): string {
-  const cleaned = value.replace(/\D/g, "");
-  if (!cleaned) return "";
-  const parsed = Number.parseInt(cleaned, 10);
-  if (!Number.isFinite(parsed)) return "";
-  return String(Math.min(parsed, max));
-}
-
-function AnimatedValue({ value }: { value: number }) {
-  return (
-    <motion.span
-      key={value}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
-      className="inline-block max-w-full tabular-nums break-all"
-    >
-      {formatIDR(value)}
-    </motion.span>
-  );
-}
 
 type FormState = {
   namaAnak: string;
@@ -199,6 +164,104 @@ type ResultData = {
 
 const inputClasses =
   "w-full rounded-xl border border-neutral-200 bg-white py-3 pl-11 pr-4 text-sm text-ink transition placeholder:text-neutral-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-100 dark:placeholder:text-neutral-500";
+
+function PrintPendidikan({ result, form }: { result: ResultData; form: FormState }) {
+  const inflasiVal = toNumber(form.inflasi, MAX_PERCENT);
+  const imbalHasilVal = toNumber(form.imbalHasil, MAX_PERCENT);
+
+  const recommendation = result.mampuCukup
+    ? `Investasi bulanan Anda sebesar ${formatIDR(result.investasiMampu)} sudah cukup untuk memenuhi kebutuhan pendidikan ${result.namaAnak ? `anak ${result.namaAnak} ` : ""}sebesar ${formatIDR(result.futureCost)} di masa depan. Pertahankan kebiasaan berinvestasi ini dan pertimbangkan untuk menambah alokasi dana jika diperlukan.`
+    : `Untuk memenuhi kebutuhan pendidikan ${result.namaAnak ? `anak ${result.namaAnak} ` : ""}sebesar ${formatIDR(result.futureCost)}, Anda perlu investasi bulanan sebesar ${formatIDR(result.investasiDibutuhkan)}. Saat ini masih kekurangan ${formatIDR(Math.max(0, result.investasiDibutuhkan - result.investasiMampu))} per bulan. Pertimbangkan untuk menambah investasi atau menambah modal awal agar target tercapai tepat waktu.`;
+
+  return (
+    <div id="pendidikan-print-layout" className="hidden print:block">
+      <div className="p-8 text-sm text-neutral-900">
+        <h1 className="mb-6 text-2xl font-bold text-center">
+          Laporan Kalkulator Pendidikan
+        </h1>
+
+        {result.namaAnak && (
+          <p className="mb-4 text-base">
+            <span className="font-semibold">Nama Anak:</span> {result.namaAnak}
+          </p>
+        )}
+
+        <div className="mb-6">
+          <h2 className="mb-2 text-lg font-bold border-b pb-1">Data Input</h2>
+          <table className="w-full border-collapse">
+            <tbody>
+              <tr className="border-b">
+                <td className="py-2 font-medium w-1/2">Nama Anak</td>
+                <td className="py-2">{result.namaAnak || "-"}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Waktu hingga Kuliah</td>
+                <td className="py-2">{result.jangkaWaktu} tahun</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Biaya Kuliah (Uang Pangkal + SPP Tahunan)</td>
+                <td className="py-2">{formatIDR(toNumber(form.uangPangkal, MAX_CURRENCY) + toNumber(form.sppTahunan, MAX_CURRENCY))}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">SPP/Tahun</td>
+                <td className="py-2">{formatIDR(toNumber(form.sppTahunan, MAX_CURRENCY))}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Tabungan Awal</td>
+                <td className="py-2">{formatIDR(toNumber(form.modalAwal, MAX_CURRENCY))}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Investasi/Bulan</td>
+                <td className="py-2">{formatIDR(result.investasiMampu)}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Inflasi</td>
+                <td className="py-2">{inflasiVal}% per tahun</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Return (Imbal Hasil)</td>
+                <td className="py-2">{imbalHasilVal}% per tahun</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mb-6">
+          <h2 className="mb-2 text-lg font-bold border-b pb-1">Hasil Perhitungan</h2>
+          <table className="w-full border-collapse">
+            <tbody>
+              <tr className="border-b">
+                <td className="py-2 font-medium w-1/2">Total Dibutuhkan (di Masa Depan)</td>
+                <td className="py-2 font-bold">{formatIDR(result.futureCost)}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Total Tabungan (Modal Awal di Masa Depan)</td>
+                <td className="py-2">{formatIDR(toNumber(form.modalAwal, MAX_CURRENCY) * Math.pow(1 + imbalHasilVal / 100, result.jangkaWaktu))}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Kekurangan (Defisit)</td>
+                <td className="py-2">{formatIDR(result.targetDefisit)}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-medium">Investasi/Bulan Dibutuhkan</td>
+                <td className="py-2 font-bold">{formatIDR(result.investasiDibutuhkan)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mb-6">
+          <h2 className="mb-2 text-lg font-bold border-b pb-1">Rekomendasi</h2>
+          <p className="leading-relaxed">{recommendation}</p>
+        </div>
+
+        <p className="mt-8 text-xs text-neutral-500 text-center">
+          Laporan ini dihasilkan oleh Kalkulator Pendidikan
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function PendidikanCalculator() {
   const [form, setForm] = useState<FormState>(defaultForm);
@@ -349,7 +412,7 @@ export default function PendidikanCalculator() {
           </form>
         </div>
 
-        <div className="rounded-3xl bg-ink p-6 text-white shadow-lg dark:bg-neutral-900 sm:p-8 lg:sticky lg:top-24" aria-live="polite">
+        <div id="pendidikan-result" className="rounded-3xl bg-ink p-6 text-white shadow-lg dark:bg-neutral-900 sm:p-8 lg:sticky lg:top-24" aria-live="polite">
           <AnimatePresence mode="wait">
             {result ? (
               <motion.div
@@ -458,6 +521,14 @@ export default function PendidikanCalculator() {
                     </motion.div>
                   )}
                 </div>
+
+                <div className="mt-6 flex justify-center">
+                  <PrintButton
+                    elementId="pendidikan-print-layout"
+                    filename="laporan-kalkulator-pendidikan"
+                    disabled={!result}
+                  />
+                </div>
               </motion.div>
             ) : (
               <motion.div
@@ -484,6 +555,8 @@ export default function PendidikanCalculator() {
           </AnimatePresence>
         </div>
       </div>
+
+      {result && <PrintPendidikan result={result} form={form} />}
     </section>
   );
 }
