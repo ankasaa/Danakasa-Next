@@ -1,4 +1,4 @@
-import { siteUrl, site } from "./site";
+import { siteUrl, site, socials } from "./site";
 
 type JsonLdOrganization = {
   "@context": string;
@@ -15,6 +15,7 @@ type JsonLdOrganization = {
     addressLocality: string;
     addressCountry: string;
   };
+  sameAs: string[];
 };
 
 type JsonLdArticle = {
@@ -29,6 +30,8 @@ type JsonLdArticle = {
     logo: { "@type": string; url: string };
   };
   datePublished: string;
+  dateModified: string;
+  image: string;
   url: string;
 };
 
@@ -61,6 +64,7 @@ export function generateOrganizationJsonLd(): JsonLdOrganization {
       addressLocality: "Badung",
       addressCountry: "ID",
     },
+    sameAs: Object.values(socials).filter((url) => url !== "#"),
   };
 }
 
@@ -83,6 +87,8 @@ export function generateArticleJsonLd(post: {
       logo: { "@type": "ImageObject", url: `${siteUrl}/logo/danakasa-icon.png` },
     },
     datePublished: parseIndonesianDateToISO(post.date),
+    dateModified: parseIndonesianDateToISO(post.date),
+    image: `${siteUrl}/og-default.png`,
     url: `${siteUrl}/blog/${post.slug}`,
   };
 }

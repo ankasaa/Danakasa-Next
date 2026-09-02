@@ -34,6 +34,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `${siteUrl}/blog/${post.slug}`,
       siteName: "DanaKasa",
       authors: [post.author],
+      publishedTime: post.date,
+      modifiedTime: post.date,
       images: [
         {
           url: "/og-default.png",
